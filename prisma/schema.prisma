@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,20 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model user {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar
+  nim        String   @unique @db.VarChar
+  className  String   @db.VarChar
+  email      String   @unique @db.VarChar
+  noHp       String   @db.VarChar
+  gender     String   @db.VarChar
+  faculty    String   @db.VarChar
+  year       String   @db.VarChar
+  major      String   @db.VarChar
+  password   String?  @db.VarChar
+  created_at DateTime @default(now()) @db.Timestamptz(6)
 }

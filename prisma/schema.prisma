@@ -12,3 +12,82 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id            Int           @id @default(autoincrement())  
+  name          String                                       
+  nim           String                                       
+  class         String                                       
+  noHp          String                                       
+  gender        String                                       
+  major         String                                       
+  faculty       String                                       
+  document      String                                       
+  year          Int                                          
+  modul         Modul[]                                      
+  submission    Submission[]                                 // Hubungan ke submission yang dikirim pengguna
+  certification Certification[]                             // Hubungan ke sertifikasi yang diterima pengguna
+  messages      Message[]                                    // Hubungan ke pesan-pesan yang dikirim pengguna
+}
+
+model Admin {
+  id            Int           @id @default(autoincrement())
+  username      String                                       
+  password      String                                       
+  name          String                                       
+  modul         Modul[]                                      // Hubungan ke modul-modul yang diatur oleh admin
+  submission    Submission[]                                 // Hubungan ke submission yang diawasi admin
+  certification Certification[]                             // Hubungan ke sertifikasi yang diurus oleh admin
+}
+
+model Modul {
+  id        Int     @id @default(autoincrement())            
+  name      String                                           
+  link      String                                           
+  user_id   Int                                              
+  admin_id  Int                                              // ID admin yang mengelola modul
+  status    Boolean                                          // Status modul (aktif/tidak)
+  
+  // Relasi dengan User dan Admin
+  user      User     @relation(fields: [user_id], references: [id])  // Hubungan ke pengguna
+  admin     Admin    @relation(fields: [admin_id], references: [id]) // Hubungan ke admin
+}
+
+model Submission {
+  id        Int     @id @default(autoincrement())           
+  openedAt  DateTime                                        
+  closedAt  DateTime                                        
+  file      String                                          
+  user_id   Int                                             
+  admin_id  Int                                             
+  user      User     @relation(fields: [user_id], references: [id])  // Hubungan ke pengguna
+  admin     Admin    @relation(fields: [admin_id], references: [id]) // Hubungan ke admin
+}
+
+model Certification {
+  id        Int     @id @default(autoincrement())            
+  image     String                                           
+  name      String                                           
+  user_id   Int                                              // ID pengguna yang menerima sertifikasi
+  admin_id  Int                                              // ID admin yang mengeluarkan sertifikasi
+  user      User     @relation(fields: [user_id], references: [id])  // Hubungan ke pengguna
+  admin     Admin    @relation(fields: [admin_id], references: [id]) // Hubungan ke admin
+}
+
+model Topic {
+  id          String    @id @default(uuid())                 
+  title       String                                         
+  description String?                                        
+  Message     Message[]                                      // Setiap topik bisa memiliki banyak pesan
+}
+
+model Message {
+  id        String   @id @default(uuid())                    
+  content   String
+  image     String?                                           
+  createdAt DateTime @default(now())                         
+  userId    Int                                              // ID pengguna yang mengirim pesan
+  topicId   String                                           // ID topik di mana pesan dikirim
+  User      User     @relation(fields: [userId], references: [id])   // Hubungan ke pengguna yang mengirim pesan
+  Topic     Topic    @relation(fields: [topicId], references: [id])  // Hubungan ke topik di mana pesan dikirim
+}

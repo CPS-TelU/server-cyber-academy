@@ -1,4 +1,4 @@
-const imagekit = require('../config/imagekit');
+const imagekit = require('../libs/imagekit');
 
 const handleFileUpload = async (file) => {
 

@@ -19,15 +19,20 @@ model User {
   nim           String                                       
   class         String                                       
   noHp          String                                       
-  gender        String                                       
+  gender        String
+  email         String
+  password      String                                       
   major         String                                       
   faculty       String                                       
-  document      String                                       
+  document      String
+  github        String                                       
   year          Int                                          
   modul         Modul[]                                      
-  submission    Submission[]                                 // Hubungan ke submission yang dikirim pengguna
-  certification Certification[]                             // Hubungan ke sertifikasi yang diterima pengguna
-  messages      Message[]                                    // Hubungan ke pesan-pesan yang dikirim pengguna
+  submission    Submission[]                                 
+  certification Certification[]                             
+  questions     Questions[]                                  // Relasi ke Questions yang dibuat oleh user
+  answers       Answer[]                                     // Relasi ke Answers yang dibuat oleh user
+  topics        Topic[]
 }
 
 model Admin {
@@ -47,8 +52,6 @@ model Modul {
   user_id   Int                                              
   admin_id  Int                                              // ID admin yang mengelola modul
   status    Boolean                                          // Status modul (aktif/tidak)
-  
-  // Relasi dengan User dan Admin
   user      User     @relation(fields: [user_id], references: [id])  // Hubungan ke pengguna
   admin     Admin    @relation(fields: [admin_id], references: [id]) // Hubungan ke admin
 }
@@ -75,19 +78,32 @@ model Certification {
 }
 
 model Topic {
-  id          String    @id @default(uuid())                 
-  title       String                                         
-  description String?                                        
-  Message     Message[]                                      // Setiap topik bisa memiliki banyak pesan
+  id        String      @id @default(uuid())                 
+  title     String
+  userId    Int
+  User      User        @relation(fields: [userId], references: [id]) // Relasi ke pengguna yang membuat topik
+  questions Questions[] // Relasi one-to-many ke pertanyaan
 }
 
-model Message {
-  id        String   @id @default(uuid())                    
-  content   String
+model Questions {
+  id        String      @id @default(uuid())                    
+  messages  String
   image     String?                                           
-  createdAt DateTime @default(now())                         
+  createdAt DateTime    @default(now())                         
   userId    Int                                              // ID pengguna yang mengirim pesan
   topicId   String                                           // ID topik di mana pesan dikirim
-  User      User     @relation(fields: [userId], references: [id])   // Hubungan ke pengguna yang mengirim pesan
-  Topic     Topic    @relation(fields: [topicId], references: [id])  // Hubungan ke topik di mana pesan dikirim
+  User      User        @relation(fields: [userId], references: [id])   // Hubungan ke pengguna yang mengirim pesan
+  Topic     Topic       @relation(fields: [topicId], references: [id])  // Hubungan ke topik di mana pesan dikirim
+  answers   Answer[]    // Relasi one-to-many ke jawaban
+}
+
+model Answer {
+  id        String         @id @default(uuid()) 
+  messages  String
+  image     String?
+  createdAt DateTime    @default(now()) 
+  userId    Int
+  questionId String     // ID pertanyaan yang dijawab
+  User      User        @relation(fields: [userId], references: [id]) // Hubungan ke pengguna yang menjawab
+  Questions Questions   @relation(fields: [questionId], references: [id]) // Hubungan ke pertanyaan yang dijawab
 }

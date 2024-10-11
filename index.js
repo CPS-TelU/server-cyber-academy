@@ -9,7 +9,7 @@ app.use(express.json());
 app.use('/api', moduleRoutes);
 // Menangani rute dasar
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('API for CPS LMS');
 });
 
 // Menjalankan server

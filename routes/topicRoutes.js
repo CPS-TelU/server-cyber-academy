@@ -9,7 +9,6 @@ const discussion = () => {
   router.post("/topic", createTopic);
   router.get("/topics", getTopics);
   router.get("/topic/:id", getTopicById);
-
   return router;
 };
 

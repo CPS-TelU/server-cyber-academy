@@ -2,8 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const topicRoutes = require("./routes/topicRoutes.js");
-const questionController = require("./controller/questionController.js");
-const answerController = require("./controller/answerController.js");
+const questionRoutes = require("./routes/questionRoutes.js");
+const answerRoutes = require("./routes/answerRoutes.js");
 const { Server } = require("socket.io");
 require("dotenv").config();
 const app = express();
@@ -17,9 +17,9 @@ let corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 //routes
-app.use("/topic", topicRoutes);
-app.use("/question", questionController);
-app.use("/answer", answerController);
+app.use("/discussion", topicRoutes);
+app.use("/discussion", questionRoutes);
+app.use("/discussion", answerRoutes);
 
 //server
 const server = http.createServer(app);

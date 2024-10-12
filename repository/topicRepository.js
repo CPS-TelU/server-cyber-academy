@@ -1,4 +1,4 @@
-const prisma = require("../config/db");
+const prisma = require("../config/db.js");
 
 const createTopic = async (topic) => {
   const newTopic = await prisma.topic.create({

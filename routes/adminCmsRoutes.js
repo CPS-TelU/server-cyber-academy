@@ -60,20 +60,26 @@ router.get('/submission', (req, res) => {
   
   });
 
-  router.get('/certificate', (req, res) => {
-    const certificate = [
-        { id: 1, name: 'junaidi R', group: 'Ravenclaw', grade: '85/100', status: 'Pass' },
-        { id: 2, name: 'Yamaha R1', group: 'junaidi/ig', grade: '85/100', status: 'Pass' },
-        { id: 3, name: 'Ducati V4', group: 'junaidi/ig', grade: '90/100', status: 'Fail' },
-        { id: 4, name: 'junaidi R', group: 'junaidi/ig', grade: '90/100', status: 'Fail' }
-      ];
-
-    res.render('certificate', { 
-    certificateList: certificate,
-    title: 'Certificate Upload' // Menambahkan variabel title di sini
+  router.get('/certificate', async (req, res) => {
+    try {
+      // Mengambil data sertifikat dari database menggunakan Prisma
+      const certificates = await prisma.certification.findMany({
+        include: {
+          user: true // Misalnya jika Anda ingin mengambil relasi dengan tabel user
+        }
+      });
+  
+      // Mengirimkan data sertifikat ke view EJS
+      res.render('certificate', { 
+        certificateList: certificates,
+        title: 'Certificate Upload' 
+      });
+    } catch (error) {
+      console.error('Error fetching certificates:', error);
+      res.status(500).send('Server Error');
+    }
   });
   
-  });
 
   router.get('/participant', (req, res) => {
     res.render('allParticipant', {

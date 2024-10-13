@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { registerUser, getUserByNim, blacklistToken } = require('../repository/userAuthRepository');
 
-const registerUserService = async (name, nim, email, noHp, gender, faculty, year, major, password) => {
+const registerUserService = async (name, nim, className, email, noHp, gender, faculty, year, major, password, document, github) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
@@ -22,7 +22,7 @@ const registerUserService = async (name, nim, email, noHp, gender, faculty, year
     
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    await registerUser(name, nim, email, noHp, gender, faculty, year, major, hashedPassword);
+    await registerUser(name, nim, className, email, noHp, gender, faculty, year, major, hashedPassword, document, github);
     return { 
         status: true, 
         message: 'Account created' 

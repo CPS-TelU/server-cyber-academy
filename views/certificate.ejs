@@ -1,4 +1,4 @@
-<!-- views/submission.ejs -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +27,7 @@
         <% certificateList.forEach(certificate => { %>
           <tr>
             <td><%= certificate.id %></td>
-            <td><%= certificate.name %></td>
+            <td><%= certificate.user.name %></td>
             <td><%= certificate.group %></td>
             <td><%= certificate.grade %></td>
             <td><%= certificate.status %></td>

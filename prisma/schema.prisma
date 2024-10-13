@@ -12,7 +12,7 @@ model User {
   id            Int             @id @default(autoincrement())
   name          String
   nim           String
-  class         String
+  className     String
   noHp          String
   gender        String
   email         String
@@ -35,7 +35,7 @@ model Admin {
   username      String
   password      String
   name          String
-  certification Certification[]
+  Certification Certification[]
   modul         Modul[]
   submission    Submission[]
 }
@@ -63,13 +63,15 @@ model Submission {
 }
 
 model Certification {
-  id       Int    @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   image    String
-  name     String
+  name     String?
   user_id  Int
-  admin_id Int
-  admin    Admin  @relation(fields: [admin_id], references: [id])
-  user     User   @relation(fields: [user_id], references: [id])
+  admin_id Int?
+  grade    Int?    @db.SmallInt
+  status   String? @db.VarChar
+  Admin    Admin?  @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+  user     User    @relation(fields: [user_id], references: [id])
 }
 
 model Topic {

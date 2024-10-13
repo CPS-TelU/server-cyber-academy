@@ -5,13 +5,16 @@ const registerUserController = async (req, res) => {
         const register = await registerUserService(
             req.body.name, 
             req.body.nim, 
+            req.body.className, 
             req.body.email, 
             req.body.noHp, 
             req.body.gender, 
             req.body.faculty, 
             req.body.year, 
             req.body.major,
-            req.body.password
+            req.body.password,
+            req.body.document,
+            req.body.github
         );
         res.status(200).json(register);
       } catch (error) {

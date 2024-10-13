@@ -5,7 +5,6 @@ const registerUserController = async (req, res) => {
         const register = await registerUserService(
             req.body.name, 
             req.body.nim, 
-            req.body.className, 
             req.body.email, 
             req.body.noHp, 
             req.body.gender, 

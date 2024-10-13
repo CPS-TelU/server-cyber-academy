@@ -2,21 +2,19 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const topicRoutes = require("./routes/topicRoutes.js");
-<<<<<<< HEAD
-const questionRoutes = require("./routes/questionRoutes.js");  // Import question routes
-const answerRoutes = require("./routes/answerRoutes.js");      // Import answer routes
-=======
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
->>>>>>> 2300811506bdfe9e2e52842ffd194cf5d49e62c7
+const moduleRoutes = require("./routes/moduleRoutes.js");
+const certificateRoutes = require("./routes/certificateRoutes.js");
+const taskRoutes = require("./routes/taskRoutes.js");
 const { Server } = require("socket.io");
 require("dotenv").config();
 
 const app = express();
 
 // CORS options
-let corsOptions = {
-  origin: "http://localhost:3000",  // Or use process.env.CLIENT_URL if you want to move to .env
+const corsOptions = {
+  origin: process.env.CLIENT_URL || "http://localhost:3000",
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -25,18 +23,14 @@ let corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
-<<<<<<< HEAD
-=======
-//routes
-app.use("/discussion", topicRoutes);
-app.use("/discussion", questionRoutes);
-app.use("/discussion", answerRoutes);
->>>>>>> 2300811506bdfe9e2e52842ffd194cf5d49e62c7
 
 // Use the routes
-app.use("/topic", topicRoutes);
-app.use("/question", questionRoutes);  // Use question routes
-app.use("/answer", answerRoutes);      // Use answer routes
+app.use("/api/topics", topicRoutes);
+app.use("/api/questions", questionRoutes);
+app.use("/api/answers", answerRoutes);
+app.use("/api/modules", moduleRoutes);
+app.use("/api/certificates", certificateRoutes);
+app.use("/api/tasks", taskRoutes);
 
 // Server setup
 const server = http.createServer(app);
@@ -50,12 +44,12 @@ io.on("connection", (socket) => {
 
   // Listening for new question events
   socket.on("newQuestion", (questionData) => {
-    io.emit("questionBroadcast", questionData);  // Broadcast question to all clients
+    io.emit("questionBroadcast", questionData); // Broadcast question to all clients
   });
 
   // Listening for new answer events
   socket.on("newAnswer", (answerData) => {
-    io.emit("answerBroadcast", answerData);  // Broadcast answer to all clients
+    io.emit("answerBroadcast", answerData); // Broadcast answer to all clients
   });
 
   socket.on("disconnect", () => {
@@ -63,5 +57,5 @@ io.on("connection", (socket) => {
   });
 });
 
-// Exporting app and server
+// Exporting app and server for testing
 module.exports = { app, server };

@@ -6,8 +6,10 @@ const {
 } = require("../controller/topicController.js");
 
 const router = express.Router();
-router.post("/topic", createTopic);
-router.get("/topics", getTopics);
-router.get("/topic/:id", getTopicById);
+
+// Define the routes without repeating the base path
+router.post("/", createTopic);          // POST /api/topics/
+router.get("/", getTopics);             // GET /api/topics/
+router.get("/:id", getTopicById);       // GET /api/topics/:id
 
 module.exports = router;

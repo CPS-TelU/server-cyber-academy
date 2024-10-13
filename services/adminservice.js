@@ -3,11 +3,10 @@ const imagekit = require('../libs/imagekit');
 const handleFileUpload = async (file) => {
 
     const uploadResponse = await imagekit.upload({
-        file: file.buffer.toString('base64'), // Convert buffer to base64 string
-        fileName: file.originalname, // Menggunakan nama asli file
+        file: file.buffer.toString('base64'),
+        fileName: file.originalname,
         folder: '/CA/Modul'
     });
-    // Logika pemrosesan file jika ada
     return {
         filename: file.originalname,
         path: file.path,
@@ -43,6 +42,18 @@ const handleSubmisUpload = async (file) => {
     };
 };
 
+const { getUsersRepository} = require('../repository/adminRepository');
+
+const getUsersService = async () => {
+    try {
+        // Memanggil fungsi getUsers dari userRepository
+        const users = await getUsersRepository();
+        return users;
+    } catch (error) {
+        throw new Error('Gagal memproses data user');
+    }
+};
+
 module.exports = {
-    handleFileUpload, handleSertifUpload, handleSubmisUpload
+    handleFileUpload, handleSertifUpload, handleSubmisUpload, getUsersService
 };

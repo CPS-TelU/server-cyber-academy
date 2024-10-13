@@ -1,18 +1,15 @@
-const { handleFileUpload, handleSertifUpload, handleSubmisUpload } = require('../services/adminservice');
+const { handleFileUpload, handleSertifUpload, handleSubmisUpload, getUsersService } = require('../services/adminservice');
 
 const uploadFile = async (req, res) => {
     try {
-        // Memanggil service untuk mengunggah file ke ImageKit
+        
         const fileData = await handleFileUpload(req.file);
-
-        // Mengembalikan respons dengan data file yang berhasil diunggah
         res.status(200).json({
             success: true,
             message: 'File uploaded successfully!',
             data: fileData
         });
     } catch (error) {
-        // Menangani error jika terjadi masalah
         res.status(500).json({
             success: false,
             message: 'Error uploading file',
@@ -57,6 +54,16 @@ const uploadSubmis = async (req, res) => {
     }
 };
 
+// Controller untuk mengambil data user (name, nim, class)
+const getUsersController = async (req, res) => {
+    try {
+        const users = await getUsersService();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
-    uploadFile, uploadSerti, uploadSubmis,
+    uploadFile, uploadSerti, uploadSubmis, getUsersController
 };

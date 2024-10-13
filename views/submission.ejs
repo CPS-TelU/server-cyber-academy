@@ -1,0 +1,45 @@
+<!-- views/submission.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submission List</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- <h1>Submission List</h1> -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Uploaded At</th>
+          <th>Group</th>
+          <th>Task</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% submissionList.forEach(submission => { %>
+          <tr>
+            <td><%= submission.id %></td>
+            <td><%= submission.name %></td>
+            <td><%= submission.uploadedAt %></td>
+            <td><%= submission.group %></td>
+            <td><%= submission.task %></td>
+            <td><%= submission.status %></td>
+            <td>
+              <!-- <button class="btn btn-primary">Edit</button> -->
+              <a href="/cms/submission/spectate" class="btn btn-primary">Edit</a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

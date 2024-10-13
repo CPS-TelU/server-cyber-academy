@@ -10,6 +10,7 @@ let corsOptions = {
   origin: "http://localhost:3000",
 };
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 module.exports = app;

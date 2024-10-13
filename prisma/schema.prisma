@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,80 +8,96 @@ datasource db {
 }
 
 model User {
-  id            Int           @id @default(autoincrement())  
-  name          String                                       
-  nim           String                                       
-  class         String                                       
-  noHp          String                                       
-  gender        String                                       
-  major         String                                       
-  faculty       String                                       
-  document      String                                       
-  year          Int                                          
-  modul         Modul[]                                      
-  submission    Submission[]                                 // Hubungan ke submission yang dikirim pengguna
-  certification Certification[]                             // Hubungan ke sertifikasi yang diterima pengguna
-  messages      Message[]                                    // Hubungan ke pesan-pesan yang dikirim pengguna
+  id            Int             @id @default(autoincrement())
+  name          String
+  nim           String
+  class         String
+  noHp          String
+  gender        String
+  email         String
+  password      String
+  major         String
+  faculty       String
+  document      String
+  github        String
+  year          Int
+  answers       Answer[]
+  certification Certification[]
+  modul         Modul[]
+  questions     Questions[]
+  submission    Submission[]
+  topics        Topic[]
 }
 
 model Admin {
-  id            Int           @id @default(autoincrement())
-  username      String                                       
-  password      String                                       
-  name          String                                       
-  modul         Modul[]                                      // Hubungan ke modul-modul yang diatur oleh admin
-  submission    Submission[]                                 // Hubungan ke submission yang diawasi admin
-  certification Certification[]                             // Hubungan ke sertifikasi yang diurus oleh admin
+  id            Int             @id @default(autoincrement())
+  username      String
+  password      String
+  name          String
+  certification Certification[]
+  modul         Modul[]
+  submission    Submission[]
 }
 
 model Modul {
-  id        Int     @id @default(autoincrement())            
-  name      String                                           
-  link      String                                           
-  user_id   Int                                              
-  admin_id  Int                                              // ID admin yang mengelola modul
-  status    Boolean                                          // Status modul (aktif/tidak)
-  
-  // Relasi dengan User dan Admin
-  user      User     @relation(fields: [user_id], references: [id])  // Hubungan ke pengguna
-  admin     Admin    @relation(fields: [admin_id], references: [id]) // Hubungan ke admin
+  id       Int     @id @default(autoincrement())
+  name     String
+  link     String
+  user_id  Int
+  admin_id Int
+  status   Boolean
+  admin    Admin   @relation(fields: [admin_id], references: [id])
+  user     User    @relation(fields: [user_id], references: [id])
 }
 
 model Submission {
-  id        Int     @id @default(autoincrement())           
-  openedAt  DateTime                                        
-  closedAt  DateTime                                        
-  file      String                                          
-  user_id   Int                                             
-  admin_id  Int                                             
-  user      User     @relation(fields: [user_id], references: [id])  // Hubungan ke pengguna
-  admin     Admin    @relation(fields: [admin_id], references: [id]) // Hubungan ke admin
+  id       Int      @id @default(autoincrement())
+  openedAt DateTime
+  closedAt DateTime
+  file     String
+  user_id  Int
+  admin_id Int
+  admin    Admin    @relation(fields: [admin_id], references: [id])
+  user     User     @relation(fields: [user_id], references: [id])
 }
 
 model Certification {
-  id        Int     @id @default(autoincrement())            
-  image     String                                           
-  name      String                                           
-  user_id   Int                                              // ID pengguna yang menerima sertifikasi
-  admin_id  Int                                              // ID admin yang mengeluarkan sertifikasi
-  user      User     @relation(fields: [user_id], references: [id])  // Hubungan ke pengguna
-  admin     Admin    @relation(fields: [admin_id], references: [id]) // Hubungan ke admin
+  id       Int    @id @default(autoincrement())
+  image    String
+  name     String
+  user_id  Int
+  admin_id Int
+  admin    Admin  @relation(fields: [admin_id], references: [id])
+  user     User   @relation(fields: [user_id], references: [id])
 }
 
 model Topic {
-  id          String    @id @default(uuid())                 
-  title       String                                         
-  description String?                                        
-  Message     Message[]                                      // Setiap topik bisa memiliki banyak pesan
+  id        String      @id @default(uuid())
+  title     String
+  userId    Int
+  questions Questions[]
+  User      User        @relation(fields: [userId], references: [id])
 }
 
-model Message {
-  id        String   @id @default(uuid())                    
-  content   String
-  image     String?                                           
-  createdAt DateTime @default(now())                         
-  userId    Int                                              // ID pengguna yang mengirim pesan
-  topicId   String                                           // ID topik di mana pesan dikirim
-  User      User     @relation(fields: [userId], references: [id])   // Hubungan ke pengguna yang mengirim pesan
-  Topic     Topic    @relation(fields: [topicId], references: [id])  // Hubungan ke topik di mana pesan dikirim
+model Questions {
+  id        String   @id @default(uuid())
+  messages  String
+  image     String?
+  createdAt DateTime @default(now())
+  userId    Int
+  topicId   String
+  answers   Answer[]
+  Topic     Topic    @relation(fields: [topicId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model Answer {
+  id         String    @id @default(uuid())
+  messages   String
+  image      String?
+  createdAt  DateTime  @default(now())
+  userId     Int
+  questionId String
+  Questions  Questions @relation(fields: [questionId], references: [id])
+  User       User      @relation(fields: [userId], references: [id])
 }

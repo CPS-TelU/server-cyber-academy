@@ -9,13 +9,13 @@ class ModulRepository {
         name: data.name,
         link: data.link,
         status: data.status,
-        admin: { connect: { id: data.admin_id } }, // Relate to admin
-        user: { connect: { id: data.user_id } },   // Relate to user
+        admin: { connect: { id: data.admin_id } },
+        user: { connect: { id: data.user_id } },
       },
     });
   }
 
-  // Get all Modul for a specific User or Admin
+  // Get all Moduls
   async getAllModuls() {
     return await prisma.modul.findMany({
       include: {

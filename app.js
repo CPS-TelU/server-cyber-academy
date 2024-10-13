@@ -10,6 +10,7 @@ const topicRoutes = require("./routes/topicRoutes.js");
 const userAuthRoutes = require('./routes/userAuthRoutes')
 const adminCmsRoutes = require('./routes/adminCmsRoutes')
 const adminRoutes = require('./routes/adminroutes.js')
+const modulRoutes = require('./routes/modulRoutes');
 
 const { Server } = require("socket.io");
 require("dotenv").config();
@@ -37,6 +38,8 @@ app.get('/', (req, res) => {
 app.use("/api/auth", userAuthRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/cms", adminCmsRoutes);
+
+app.use('/api/moduls', modulRoutes);
 // app.use("/discussion", topicRoutes);
 // app.use("/discussion", questionRoutes);
 // app.use("/discussion", answerRoutes);

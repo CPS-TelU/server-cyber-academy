@@ -14,3 +14,5 @@ router.get("/answers", getAnswers);
 router.get("/answer/:id", findAnswerByQuestionId);
 
 module.exports = router;
+
+module.exports = router;

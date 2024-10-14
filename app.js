@@ -3,8 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const topicRoutes = require("./routes/topicRoutes.js");
-const questionRoutes = require("./routes/questionRoutes.js");  // Import question routes
-const answerRoutes = require("./routes/answerRoutes.js");      // Import answer routes
+const questionRoutes = require("./routes/questionRoutes.js");
+const answerRoutes = require("./routes/answerRoutes.js");
 const { Server } = require("socket.io");
 require("dotenv").config();
 
@@ -21,6 +21,10 @@ let corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
+//routes
+app.use("/discussion", topicRoutes);
+app.use("/discussion", questionRoutes);
+app.use("/discussion", answerRoutes);
 
 // Use the routes
 app.use("/topic", topicRoutes);

@@ -80,9 +80,9 @@ model Certification {
 model Topic {
   id        String      @id @default(uuid())
   title     String
-  userId    Int
+  userId    Int?
   questions Questions[]
-  User      User        @relation(fields: [userId], references: [id])
+  User      User?        @relation(fields: [userId], references: [id])
 }
 
 model Questions {

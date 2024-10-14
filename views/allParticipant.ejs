@@ -1,0 +1,27 @@
+<div class="participant-list">
+    <h4>Participant List</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nama</th>
+                <th>NIM</th>
+                <th>Class</th>
+                <th>Group</th>
+                <th>Git</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% participantList.forEach(participant => { %>
+                <tr>
+                    <td><%= participant.id %></td>
+                    <td><%= participant.nama %></td>
+                    <td><%= participant.nim %></td>
+                    <td><%= participant.className %></td>
+                    <td><%= participant.group %></td>
+                    <td><%= participant.git %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

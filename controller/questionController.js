@@ -1,11 +1,26 @@
 const questionService = require("../services/questionService.js");
-
 const createQuestion = async (req, res) => {
   try {
-    const { message } = req.body;
-    const files = req.files;
-    const question = await questionService.createQuestion(message, files);
-    res.status(201).json({
+    const { messages, topicId } = req.body;
+    const file = req.file;
+    const userId = req.userId?.id;
+    //debugging API
+    console.log("Message: ", messages);
+    console.log("User ID: ", userId);
+    console.log("Topic ID: ", topicId);
+    console.log("File: ", file);
+    if (!messages || !userId || !topicId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields" });
+    }
+    const question = await questionService.createQuestion(
+      messages,
+      file,
+      userId,
+      topicId
+    );
+    return res.status(201).json({
       success: true,
       message: "Question created successfully",
       data: question,
@@ -21,13 +36,17 @@ const createQuestion = async (req, res) => {
 const updateQuestion = async (req, res) => {
   try {
     const { id } = req.params;
-    const { message } = req.body;
-    const files = req.files;
-    const question = await questionService.updatedQuestion(id, message, files);
+    const { messages } = req.body;
+    const file = req.file;
+    const updatedQuestion = await questionService.updatedQuestion(
+      id,
+      messages,
+      file
+    );
     res.status(200).json({
       success: true,
       message: "Question updated successfully",
-      data: question,
+      data: updatedQuestion,
     });
   } catch (error) {
     res.status(500).json({
@@ -37,11 +56,29 @@ const updateQuestion = async (req, res) => {
     });
   }
 };
+const getQuestions = async (req, res) => {
+  try {
+    const questions = await questionService.getQuestions();
+    res.status(200).json({
+      success: true,
+      message: "Questions retrieved successfully",
+      data: questions,
+    });
+  } catch (error) {
+    console.error("Error in getQuestions: ", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve questions",
+      error: error.message,
+    });
+  }
+};
 const getQuestionById = async (req, res) => {
   try {
     const { id } = req.params;
     const question = await questionService.getQuestionById(id);
     if (!question) {
+      console.log("Question not found");
       return res.status(404).json({
         success: false,
         message: "Question not found",
@@ -53,6 +90,7 @@ const getQuestionById = async (req, res) => {
       data: question,
     });
   } catch (error) {
+    console.error("Error in getQuestionById: ", error);
     res.status(500).json({
       success: false,
       message: "Failed to retrieve question",
@@ -70,6 +108,7 @@ const getQuestionsByTopicId = async (req, res) => {
       data: questions,
     });
   } catch (error) {
+    console.error("Error in getQuestionsByTopicId: ", error);
     res.status(500).json({
       success: false,
       message: "Failed to retrieve questions",
@@ -89,22 +128,6 @@ const deleteQuestion = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to delete question",
-      error: error.message,
-    });
-  }
-};
-const getQuestions = async (req, res) => {
-  try {
-    const questions = await questionService.getQuestions();
-    res.status(200).json({
-      success: true,
-      message: "Questions retrieved successfully",
-      data: questions,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve questions",
       error: error.message,
     });
   }

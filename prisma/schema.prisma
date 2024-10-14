@@ -80,8 +80,8 @@ model Certification {
 model Topic {
   id        String      @id @default(uuid())                 
   title     String
-  userId    Int
-  User      User        @relation(fields: [userId], references: [id]) // Relasi ke pengguna yang membuat topik
+  userId    Int?
+  User      User?        @relation(fields: [userId], references: [id]) // Relasi ke pengguna yang membuat topik
   questions Questions[] // Relasi one-to-many ke pertanyaan
 }
 

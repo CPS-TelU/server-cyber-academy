@@ -5,17 +5,18 @@ const topicRoutes = require("./routes/topicRoutes.js");
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
 const { Server } = require("socket.io");
-require("dotenv").config();
 const app = express();
+
+require("dotenv").config();
 let corsOptions = {
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  origin: ["http://localhost:3000", "https://www.cpslaboratory.com"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
 };
-
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
+
 //routes
 app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);

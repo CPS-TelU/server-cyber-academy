@@ -35,7 +35,7 @@ model Admin {
   username      String
   password      String
   name          String
-  certification Certification[]
+  Certification Certification[]
   modul         Modul[]
   submission    Submission[]
 }
@@ -70,7 +70,7 @@ model Certification {
   admin_id Int?
   grade    Int?    @db.SmallInt
   status   String? @db.VarChar
-  admin    Admin?  @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+  Admin    Admin?  @relation(fields: [admin_id], references: [id], onDelete: Restrict)
   user     User    @relation(fields: [user_id], references: [id])
 }
 

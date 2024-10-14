@@ -1,5 +1,5 @@
 const imagekit = require('../libs/imagekit');
-const { uploadCertificate, registerAdmin } = require('../repository/adminRepository')
+const { uploadCertificate, registerAdmin, uploadTask } = require('../repository/adminRepository')
 
 const handleFileUpload = async (file) => {
 
@@ -33,13 +33,16 @@ const handleSertifUpload = async (grade, status, file, userId) => {
 };
 
 
-const handleSubmisUpload = async (file) => {
+const handleSubmisUpload = async (title, module, openedAt, closedAt, description, file) => {
 
     const uploadResponse = await imagekit.upload({
         file: file.buffer.toString('base64'),
         fileName: file.originalname, 
         folder: '/CA/Submission'
     });
+
+    await uploadTask(title, module, openedAt, closedAt, description, uploadResponse.url);
+
     return {
         filename: file.originalname,
         path: file.path,

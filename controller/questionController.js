@@ -93,10 +93,27 @@ const deleteQuestion = async (req, res) => {
     });
   }
 };
+const getQuestions = async (req, res) => {
+  try {
+    const questions = await questionService.getQuestions();
+    res.status(200).json({
+      success: true,
+      message: "Questions retrieved successfully",
+      data: questions,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve questions",
+      error: error.message,
+    });
+  }
+};
 module.exports = {
   createQuestion,
   updateQuestion,
   getQuestionById,
   getQuestionsByTopicId,
   deleteQuestion,
+  getQuestions,
 };

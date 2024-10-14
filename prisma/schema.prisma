@@ -52,14 +52,17 @@ model Modul {
 }
 
 model Submission {
-  id       Int      @id @default(autoincrement())
-  openedAt DateTime
-  closedAt DateTime
-  file     String
-  user_id  Int
-  admin_id Int
-  admin    Admin    @relation(fields: [admin_id], references: [id])
-  user     User     @relation(fields: [user_id], references: [id])
+  id          Int      @id @default(autoincrement())
+  openedAt    DateTime
+  closedAt    DateTime
+  file        String
+  user_id     Int
+  admin_id    Int
+  title       String?  @db.VarChar
+  module      String?  @db.VarChar
+  description String?
+  admin       Admin    @relation(fields: [admin_id], references: [id])
+  user        User     @relation(fields: [user_id], references: [id])
 }
 
 model Certification {

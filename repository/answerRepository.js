@@ -1,4 +1,4 @@
-const prisma = require("../prisma");
+const prisma = require("../config/db.js");
 
 const getAnswers = async () => {
   const answers = await prisma.answers.findMany();

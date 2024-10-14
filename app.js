@@ -5,8 +5,8 @@ const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 
 const topicRoutes = require("./routes/topicRoutes.js");
-// const questionRoutes = require("./routes/questionRoutes.js");
-// const answerRoutes = require("./routes/answerRoutes.js");
+const questionRoutes = require("./routes/questionRoutes.js");
+const answerRoutes = require("./routes/answerRoutes.js");
 const userAuthRoutes = require('./routes/userAuthRoutes')
 const adminCmsRoutes = require('./routes/adminCmsRoutes')
 const adminRoutes = require('./routes/adminroutes.js')
@@ -23,8 +23,8 @@ let corsOptions = {
   credentials: true,
 };
 
-
 app.set('view engine', 'ejs');
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressLayouts);
@@ -37,14 +37,9 @@ app.get('/', (req, res) => {
 app.use("/api/auth", userAuthRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/cms", adminCmsRoutes);
-// app.use("/discussion", topicRoutes);
-// app.use("/discussion", questionRoutes);
-// app.use("/discussion", answerRoutes);
-
-// // Use the routes
-// app.use("/topic", topicRoutes);
-// app.use("/question", questionRoutes);  // Use question routes
-// app.use("/answer", answerRoutes);      // Use answer routes
+app.use("/discussion", topicRoutes);
+app.use("/discussion", questionRoutes);
+app.use("/discussion", answerRoutes);
 
 // Server setup
 const server = http.createServer(app);
@@ -55,17 +50,9 @@ const io = new Server(server, {
 // Socket.io setup
 io.on("connection", (socket) => {
   console.log("A user connected");
-
-  // Listening for new question events
-  socket.on("newQuestion", (questionData) => {
-    io.emit("questionBroadcast", questionData);  // Broadcast question to all clients
+  socket.on("newMessage", (message) => {
+    io.emit("messageBroadcast", message);
   });
-
-  // Listening for new answer events
-  socket.on("newAnswer", (answerData) => {
-    io.emit("answerBroadcast", answerData);  // Broadcast answer to all clients
-  });
-
   socket.on("disconnect", () => {
     console.log("A user disconnected");
   });

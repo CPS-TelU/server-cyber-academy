@@ -58,7 +58,7 @@ const uploadSerti = async (req, res) => {
 const uploadSubmis = async (req, res) => {
     try {
 
-        const fileData = await handleSubmisUpload(req.file);
+        const fileData = await handleSubmisUpload(req.body.title, req.body.module, req.body.openedAt, req.body.closedAt, req.body.description, req.file);
         res.status(200).json({
             success: true,
             message: 'File uploaded successfully!',

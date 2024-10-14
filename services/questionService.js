@@ -1,7 +1,7 @@
 const questionRepository = require("../repository/questionRepository.js");
 
 const createQuestion = async (message, files) => {
-  const imageUploads = await promise.all(
+  const imageUploads = await Promise.all(
     files.map((file) => {
       return imagekit.upload({
         file: file.buffer,
@@ -22,7 +22,7 @@ const createQuestion = async (message, files) => {
 };
 
 const updatedQuestion = async (id, message, files) => {
-  const imageUploads = await promise.all(
+  const imageUploads = await Promise.all(
     files.map((file) => {
       return imagekit.upload({
         file: file.buffer,
@@ -54,10 +54,15 @@ const deletedQuestion = async (id) => {
   return questionRepository.deleteQuestion(id);
 };
 
+const getQuestions = async () => {
+  return questionRepository.getQuestions();
+};
+
 module.exports = {
   createQuestion,
   updatedQuestion,
   getQuestionById,
   getQuestionsByTopicId,
   deletedQuestion,
+  getQuestions,
 };

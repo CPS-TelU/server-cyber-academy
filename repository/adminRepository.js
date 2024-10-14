@@ -18,6 +18,26 @@ const uploadCertificate = async (grade, status, imageUrl, userId) => {
     return result;
 };
 
+const uploadTask = async (title, module, openedAt, closedAt, description, fileUrl) => {
+    const result = await prisma.submission.create({
+        data: {
+            title,
+            module,
+            openedAt,
+            closedAt,
+            description,
+            file: fileUrl,
+            // user: {
+            //     connect: {
+            //         id: userId  // Pastikan userId adalah integer, bukan array
+            //     }
+            // },
+        }
+    });
+
+    return result;
+};
+
 const registerAdmin = async (username, password, name) => {
     const result = await prisma.admin.create({
         data: {
@@ -31,4 +51,4 @@ const registerAdmin = async (username, password, name) => {
 };
 
 
-module.exports = { uploadCertificate, registerAdmin }
+module.exports = { uploadCertificate, registerAdmin, uploadTask }

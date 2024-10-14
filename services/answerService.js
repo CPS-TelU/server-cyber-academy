@@ -1,7 +1,7 @@
 const answerRepository = require("../repository/answerRepository.js");
 
 const createAnswer = async (message, file) => {
-  const imageUploads = await promise.all(
+  const imageUploads = await Promise.all(
     file.map((file) => {
       return imagekit.upload({
         file: file.buffer,
@@ -21,7 +21,7 @@ const createAnswer = async (message, file) => {
   return answerRepository.createAnswer(answer);
 };
 const updatedAnswer = async (id, message, file) => {
-  const imageUploads = await promise.all(
+  const imageUploads = await Promise.all(
     file.map((file) => {
       return imagekit.upload({
         file: file.buffer,

@@ -4,13 +4,10 @@ const http = require("http");
 const topicRoutes = require("./routes/topicRoutes.js");
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
+const moduleRoutes = require("./routes/moduleRoutes.js");
 const { Server } = require("socket.io");
 const app = express();
-
 require("dotenv").config();
-
-const app = express();
-
 // CORS options
 let corsOptions = {
   origin: ["http://localhost:3000", "https://www.cpslaboratory.com"],
@@ -28,12 +25,12 @@ app.use(express.json());
 app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
+app.use("/api", moduleRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: corsOptions,
 });
-
 // Socket.io setup
 io.on("connection", (socket) => {
   console.log("A user connected");

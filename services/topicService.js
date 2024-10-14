@@ -13,8 +13,7 @@ const getTopicById = async (id) => {
   return topic;
 };
 module.exports = {
-  createAnswer,
-  updatedAnswer,
-  getAnswers,
-  findAnswerByQuestionId,
+  createTopic,
+  getTopics,
+  getTopicById,
 };

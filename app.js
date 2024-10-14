@@ -13,6 +13,7 @@ const adminRoutes = require('./routes/adminroutes.js');
 
 const modulRoutes = require('./routes/modulRoutes');
 const certificateRoutes = require('./routes/certificateRoutes');
+const groupRoutes = require('./routes/groupRoutes.js');
 
 const { Server } = require("socket.io");
 require("dotenv").config();
@@ -43,6 +44,7 @@ app.use("/cms", adminCmsRoutes);
 
 app.use('/api/moduls', modulRoutes);
 app.use('/api/certificate', certificateRoutes);
+app.use('/api/groups', groupRoutes);
 // app.use("/discussion", topicRoutes);
 // app.use("/discussion", questionRoutes);
 // app.use("/discussion", answerRoutes);

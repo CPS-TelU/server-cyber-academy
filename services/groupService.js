@@ -12,10 +12,13 @@ async function createGroup(groupName) {
     return await groupRepository.deleteGroup(groupId);
   }
   
-  async function assignUserToGroup(userId, groupId) {
-    if (!userId || !groupId) throw new Error('Both userId and groupId are required');
-    return await groupRepository.assignUserToGroup(userId, groupId);
-  }
+  async function assignUserToGroup(userIds, groupId) {
+    if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+        throw new Error('User IDs are required and should be an array');
+    }
+    if (!groupId) throw new Error('Group ID is required');
+    return await groupRepository.assignUserToGroup(userIds, groupId);
+}
   
   async function unassignUserFromGroup(userId, groupId) {
     if (!userId || !groupId) throw new Error('Both userId and groupId are required');

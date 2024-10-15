@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require('express');
 const cors = require("cors");
 const http = require("http");
 const path = require('path');
@@ -14,11 +14,12 @@ const adminRoutes = require('./routes/adminroutes.js');
 const modulRoutes = require('./routes/modulRoutes');
 const certificateRoutes = require('./routes/certificateRoutes');
 const groupRoutes = require('./routes/groupRoutes.js');
+const submissionRoutes = require('./routes/submissionRoutes');
 
 const { Server } = require("socket.io");
 require("dotenv").config();
 
-const app = express()
+const app = express();
 
 let corsOptions = {
   origin: "http://localhost:3000",  // Or use process.env.CLIENT_URL if you want to move to .env
@@ -27,40 +28,36 @@ let corsOptions = {
   credentials: true,
 };
 
-
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressLayouts);
 app.set('layout', 'layout');
 
+// Attach Socket.io to request object
+const server = http.createServer(app);
+const io = new Server(server, { cors: corsOptions });
+
+app.use((req, res, next) => {
+  req.io = io;  // Attach io to the request object
+  next();
+});
+
 app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+  res.send('CPS API!');
+});
 
 app.use("/api/auth", userAuthRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/cms", adminCmsRoutes);
 
+// by Mitchel
 app.use('/api/moduls', modulRoutes);
 app.use('/api/certificate', certificateRoutes);
 app.use('/api/groups', groupRoutes);
-// app.use("/discussion", topicRoutes);
-// app.use("/discussion", questionRoutes);
-// app.use("/discussion", answerRoutes);
+app.use('/api/submissions', submissionRoutes);
 
-// // Use the routes
-// app.use("/topic", topicRoutes);
-// app.use("/question", questionRoutes);  // Use question routes
-// app.use("/answer", answerRoutes);      // Use answer routes
-
-// Server setup
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: corsOptions,
-});
-
-// Socket.io setup
+// Server setup for Socket.io
 io.on("connection", (socket) => {
   console.log("A user connected");
 
@@ -79,4 +76,5 @@ io.on("connection", (socket) => {
   });
 });
 
-module.exports = app, server
+// Export app and server correctly
+module.exports = app, server;

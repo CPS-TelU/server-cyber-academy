@@ -15,22 +15,23 @@ model User {
   className     String
   noHp          String
   gender        String
-  email         String          
+  email         String
   password      String
   major         String
   faculty       String
   document      String
   github        String
   year          Int
-  answer      Answer[]
+  group_id      Int?
+  answer        Answer[]
   certification Certification[]
   modul         Modul[]
   questions     Question[]
   submission    Submission[]
   topics        Topic[]
-  groups        Group[]     
+  group         Group?          @relation(fields: [group_id], references: [id])
 
-  @@map("users")  
+  @@map("users")
 }
 
 model Admin {
@@ -40,7 +41,7 @@ model Admin {
   name          String
   certification Certification[]
   modul         Modul[]
-  submission  Submission[]    // Use plural for consistency
+  submission    Submission[]
 
   @@map("admins")
 }
@@ -59,21 +60,23 @@ model Modul {
 }
 
 model Submission {
-  id        Int      @id @default(autoincrement())
-  file      String
-  submitted Boolean  @default(false)
-  group_id   Int      // Foreign key to Group model
-  task_id    Int      // Foreign key to Task model
-  user_id    Int      // Foreign key to User model
-  admin_id   Int      // Foreign key to Admin model
-  group     Group    @relation(fields: [group_id], references: [id])  // Define relation to Group
-  task      Task     @relation(fields: [task_id], references: [id])   // Define relation to Task
-  user      User     @relation(fields: [user_id], references: [id])   // Define relation to User
-  admin     Admin    @relation(fields: [admin_id], references: [id])  // Define relation to Admin
+  id         Int       @id @default(autoincrement())
+  file       String
+  submitted  Boolean   @default(false)
+  group_id   Int
+  task_id    Int
+  user_id    Int
+  admin_id   Int?
+  created_at DateTime? @db.Timestamp(6)
+  status     String?
+  grade      Int?      @db.SmallInt
+  admin      Admin?    @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+  group      Group     @relation(fields: [group_id], references: [id])
+  task       Task      @relation(fields: [task_id], references: [id])
+  user       User      @relation(fields: [user_id], references: [id])
 
   @@map("submisions")
 }
-
 
 model Certification {
   id       Int     @id @default(autoincrement())
@@ -90,11 +93,11 @@ model Certification {
 }
 
 model Topic {
-  id        String      @id @default(uuid())
+  id        String     @id @default(uuid())
   title     String
   userId    Int
   questions Question[]
-  User      User        @relation(fields: [userId], references: [id])
+  User      User       @relation(fields: [userId], references: [id])
 
   @@map("topics")
 }
@@ -114,36 +117,39 @@ model Question {
 }
 
 model Answer {
-  id         String    @id @default(uuid())
+  id         String   @id @default(uuid())
   messages   String
   image      String?
-  createdAt  DateTime  @default(now())
+  createdAt  DateTime @default(now())
   userId     Int
   questionId String
-  Questions  Question  @relation(fields: [questionId], references: [id])
-  User       User      @relation(fields: [userId], references: [id])
+  Questions  Question @relation(fields: [questionId], references: [id])
+  User       User     @relation(fields: [userId], references: [id])
 
   @@map("answers")
 }
 
 model Group {
-  id        Int      @id @default(autoincrement())
-  groupName String
-  userId     Int
-  User       User     @relation(fields: [userId], references: [id])
-  tasks     Task[]   // One-to-many relationship with Task
-  submissions Submission[] // Add this field to link Group to Submission
+  id          Int          @id @default(autoincrement())
+  groupName   String
+  submissions Submission[]
+  tasks       Task[]
+  users       User[]
 
   @@map("groups")
 }
 
 model Task {
-  id          Int      @id @default(autoincrement())
-  taskName    String
-  description String
-  groupId     Int      // Foreign key to Group
-  group       Group    @relation(fields: [groupId], references: [id]) // Define the relation to Group
-  submissions Submission[] // One-to-many relationship with Submission
+  id          Int          @id @default(autoincrement())
+  opened_at   DateTime     @db.Timestamp(6)
+  title       String
+  groupId     Int?
+  closed_at   DateTime?    @db.Timestamp(6)
+  module      String?      @db.VarChar
+  description String?
+  file        String?
+  submissions Submission[]
+  group       Group?       @relation(fields: [groupId], references: [id], onDelete: Restrict)
 
   @@map("tasks")
 }

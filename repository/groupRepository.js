@@ -19,31 +19,38 @@ class GroupRepository {
   }
 
   // Assign a user to a group
-  async assignUserToGroup(userId, groupId) {
-    return await prisma.group.update({
-      where: {
-        id: Number(groupId),
-      },
-      data: {
-        User: {
-          connect: {
-            id: Number(userId),
-          },
-        },
-      },
-    });
-  }
+ async assignUserToGroup(userIds, groupId) {
+        try {
+            return await prisma.group.update({
+                where: {
+                    id: Number(groupId),
+                },
+                data: {
+                    users: {
+                        connect: userIds.map(userId => ({ id: Number(userId) })), // Ensure the format
+                    },
+                },
+                include: {
+                    users: true, // Include users in the response
+                },
+            });
+        } catch (error) {
+            console.error('Error assigning users to group:', error);
+            throw new Error('Could not assign users to group');
+        }
+    }
+
 
   // Unassign a user from a group
   async unassignUserFromGroup(userId, groupId) {
     return await prisma.group.update({
       where: {
-        id: Number(groupId),
+        id: Number(groupId), // Ensure groupId is a number
       },
       data: {
-        User: {
+        users: { // Change from User to users
           disconnect: {
-            id: Number(userId),
+            id: Number(userId), // Ensure userId is a number
           },
         },
       },

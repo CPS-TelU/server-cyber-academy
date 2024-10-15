@@ -18,7 +18,10 @@ async function deleteGroup(req, res) {
     try {
         const groupId = parseInt(req.params.id);
         await groupService.deleteGroup(groupId);
-        res.status(204).send();
+        res.status(200).json({
+            success: true,
+            message: "Group has been deleted successfully." // Convert id to string if necessary
+        });
     } catch (error) {
         res.status(500).json({ message: "Failed to delete group", error: error.message });
     }
@@ -26,21 +29,35 @@ async function deleteGroup(req, res) {
 
 async function assignUserToGroup(req, res) {
     try {
-        const { users } = req.body;
+        const { users } = req.body; // Expecting an array of user IDs
         const groupId = parseInt(req.params.groupId);
+        
+        // Validate input
+        if (!Array.isArray(users) || users.length === 0) {
+            return res.status(400).json({ message: "Invalid input: users must be an array of user IDs." });
+        }
+
+        // Call the service to assign users to the group
         const updatedGroup = await groupService.assignUserToGroup(users, groupId);
-        // Convert BigInt to string for serialization
+
+        // Check if the group was successfully updated
+        if (!updatedGroup) {
+            return res.status(404).json({ message: "Group not found or users could not be assigned." });
+        }
+
+        // Return a successful response
         res.status(200).json({
             success: true,
-            message: "A user has been assigned",
-            data: group,
-            ...updatedGroup,
-            id: updatedGroup.id.toString() // Convert id to string
+            message: "Users have been assigned to the group successfully.",
+            data: updatedGroup, // Include the updated group data
+            id: updatedGroup.id.toString() // Convert id to string if necessary
         });
     } catch (error) {
-        res.status(500).json({ message: "Failed to assign user to group", error: error.message });
+        console.error("Error assigning users to group:", error); // Log the error for debugging
+        res.status(500).json({ message: "Failed to assign users to group", error: error.message });
     }
 }
+
 
 async function unassignUserFromGroup(req, res) {
     try {
@@ -55,7 +72,7 @@ async function unassignUserFromGroup(req, res) {
     } catch (error) {
         res.status(500).json({ message: "Failed to unassign user from group", error: error.message });
     }
-}
+}       
 
 module.exports = {
     createGroup,

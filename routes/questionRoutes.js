@@ -7,10 +7,9 @@ const {
   updateQuestion,
   deleteQuestion,
 } = require("../controller/questionController.js");
-const upload = require("../middleware/mutler.js");
+const upload = require("../middleware/multer.js");
 const router = express.Router();
 
-// Menggunakan upload untuk menerima file
 router.post("/question", upload.single("image"), createQuestion);
 router.put("/question/:id", upload.single("image"), updateQuestion);
 router.get("/questions", getQuestions);

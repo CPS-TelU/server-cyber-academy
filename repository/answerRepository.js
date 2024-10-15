@@ -1,31 +1,32 @@
 const prisma = require("../config/db.js");
 
 const getAnswers = async () => {
-  const answers = await prisma.answers.findMany();
-  return answers;
+  return await prisma.answer.findMany();
 };
-const createAnswer = async (answer) => {
-  const newAnswer = await prisma.answers.create({
-    data: answer,
-  });
-  return newAnswer;
-};
-const updateAnswer = async (id, answer) => {
-  const updatedAnswer = await prisma.answers.update({
-    where: {
-      id: id,
+
+const createAnswer = async (answerData) => {
+  return await prisma.answer.create({
+    data: {
+      messages: answerData.message,
+      image: answerData.image,
+      userId: answerData.userId,
+      questionId: answerData.questionId,
     },
+  });
+};
+
+const updateAnswer = async (id, answer) => {
+  return await prisma.answer.update({
+    where: { id: parseInt(id) },
     data: answer,
   });
-  return updatedAnswer;
 };
 const findAnswerByQuestionId = async (questionId) => {
-  const answer = await prisma.answers.findMany({
+  return await prisma.answer.findMany({
     where: {
       questionId: questionId,
     },
   });
-  return answer;
 };
 
 module.exports = {

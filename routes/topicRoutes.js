@@ -4,7 +4,6 @@ const {
   getTopics,
   getTopicById,
 } = require("../controller/topicController.js");
-
 const router = express.Router();
 router.post("/topic", createTopic);
 router.get("/topics", getTopics);

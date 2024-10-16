@@ -16,4 +16,7 @@ const getUsersRepository = async () => {
     }
 };
 
+//buat akun admin
+//buat login admin
+//buat upload sertif
 module.exports = { getUsersRepository };

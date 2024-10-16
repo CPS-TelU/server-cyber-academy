@@ -1,4 +1,4 @@
-const imagekit = require('../config/db');
+const imagekit = require('../../config/db');
 
 const handleFileUpload = async (file) => {
 
@@ -42,7 +42,7 @@ const handleSubmisUpload = async (file) => {
     };
 };
 
-const { getUsersRepository} = require('../repository/adminRepository');
+const { getUsersRepository} = require('../../repository/admin/adminRepository');
 
 const getUsersService = async () => {
     try {

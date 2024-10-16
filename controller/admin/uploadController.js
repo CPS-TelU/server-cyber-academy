@@ -1,4 +1,5 @@
-const { handleFileUpload, handleSertifUpload, handleSubmisUpload, getUsersService } = require('../services/adminservice');
+//code untuk upload sertif dll
+const { handleFileUpload, handleSertifUpload, handleSubmisUpload, getUsersService } = require('../../services/admin/uploadService');
 
 const uploadFile = async (req, res) => {
     try {

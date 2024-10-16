@@ -69,7 +69,13 @@ router.get('/admin', async (req, res) => {
 router.get('/submission', async (req, res) => {
   try {
     // Mengambil data sertifikat dari database menggunakan Prisma
-    const submissions = await prisma.submisions.findMany();
+    const submissions = await prisma.submisions.findMany({
+      include: {
+          users: true,  // Pastikan `users` di-include
+          groups: true, // Jika ada relasi dengan groups
+          tasks: true   // Jika ada relasi dengan tasks
+      }
+  });
 
     // Mengirimkan data sertifikat ke view EJS
     res.render('submission', { 

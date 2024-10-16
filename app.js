@@ -5,6 +5,7 @@ const topicRoutes = require("./routes/topicRoutes.js");
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
 const moduleRoutes = require("./routes/moduleRoutes.js");
+const userAuthRoutes = require("./routes/userAuthRoutes.js");
 const { Server } = require("socket.io");
 const app = express();
 require("dotenv").config();
@@ -26,6 +27,7 @@ app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
 app.use("/api", moduleRoutes);
+app.use("/user", userAuthRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -34,13 +36,11 @@ const io = new Server(server, {
 // Socket.io setup
 io.on("connection", (socket) => {
   console.log("A user connected");
-  // Listening for new question events
   socket.on("newQuestion", (questionData) => {
-    io.emit("questionBroadcast", questionData); // Broadcast question to all clients
+    io.emit("questionBroadcast", questionData);
   });
-  // Listening for new answer events
   socket.on("newAnswer", (answerData) => {
-    io.emit("answerBroadcast", answerData); // Broadcast answer to all clients
+    io.emit("answerBroadcast", answerData);
   });
   socket.on("disconnect", () => {
     console.log("A user disconnected");

@@ -1,15 +1,15 @@
 const answerService = require("../services/answerService.js");
 const createAnswer = async (req, res) => {
   try {
-    const { messages, questionId } = req.body;
+    const { messages, question_id } = req.body;
     const file = req.file;
-    const userId = req.user?.id;
+    const user_id = req.user?.id;
     //untuk debugging API
     console.log("Message: ", messages);
-    console.log("User ID: ", userId);
-    console.log("Question ID: ", questionId);
+    console.log("User ID: ", user_id);
+    console.log("Question ID: ", question_id);
     console.log("File: ", file);
-    if (!messages || !userId || !questionId) {
+    if (!messages || !user_id || !question_id) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
@@ -17,8 +17,8 @@ const createAnswer = async (req, res) => {
     const answer = await answerService.createAnswer(
       messages,
       file,
-      userId,
-      questionId
+      user_id,
+      question_id
     );
     return res.status(201).json({
       success: true,
@@ -71,8 +71,8 @@ const getAnswers = async (req, res) => {
 };
 const findAnswerByQuestionId = async (req, res) => {
   try {
-    const { questionId } = req.params;
-    const answer = await answerService.findAnswerByQuestionId(questionId);
+    const { question_id } = req.params;
+    const answer = await answerService.findAnswerByQuestionId(question_id);
     res.status(200).json({
       success: true,
       message: "Answer retrieved successfully",

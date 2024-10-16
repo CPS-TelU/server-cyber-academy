@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 // Register user
 const registerUser = async (name, nim, className, email, noHp, gender, faculty, year, major, hashedPassword, document, github) => {
-    const result = await prisma.user.create({
+    const result = await prisma.users.create({
         data: {
             name,
             nim,
@@ -25,7 +25,7 @@ const registerUser = async (name, nim, className, email, noHp, gender, faculty, 
 
 // Get user by NIM (for login)
 const getUserByNim = async (nim) => {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
         where: { nim },
     });
 

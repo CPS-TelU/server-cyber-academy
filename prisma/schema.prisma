@@ -7,129 +7,143 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model admins {
-  id             Int              @id @default(autoincrement())
-  username       String
-  password       String
-  name           String
-  certifications certifications[]
-  moduls         moduls[]
-  submisions     submisions[]
+/// This model contains row level security and requires additional setup for migrations.
+model User {
+  id            Int             @id @default(autoincrement())
+  name          String
+  nim           String
+  className     String
+  noHp          String
+  gender        String
+  email         String          
+  password      String
+  major         String
+  faculty       String
+  document      String
+  github        String
+  year          Int
+  answer      Answer[]
+  certification Certification[]
+  modul         Modul[]
+  questions     Question[]
+  submission    Submission[]
+  topics        Topic[]
+  groups        Group[]     
+
+  @@map("users")  
 }
 
-model answers {
-  id         String    @id
-  messages   String
-  image      String?
-  createdAt  DateTime  @default(now())
-  userId     Int
-  questionId String
-  questions  questions @relation(fields: [questionId], references: [id])
-  users      users     @relation(fields: [userId], references: [id])
+model Admin {
+  id            Int             @id @default(autoincrement())
+  username      String
+  password      String
+  name          String
+  certification Certification[]
+  modul         Modul[]
+  submission  Submission[]    // Use plural for consistency
+
+  @@map("admins")
 }
 
-model certifications {
+model Modul {
+  id       Int     @id @default(autoincrement())
+  name     String
+  link     String
+  user_id  Int
+  admin_id Int
+  status   Boolean
+  admin    Admin   @relation(fields: [admin_id], references: [id])
+  user     User    @relation(fields: [user_id], references: [id])
+
+  @@map("moduls")
+}
+
+model Submission {
+  id        Int      @id @default(autoincrement())
+  file      String
+  submitted Boolean  @default(false)
+  group_id   Int      // Foreign key to Group model
+  task_id    Int      // Foreign key to Task model
+  user_id    Int      // Foreign key to User model
+  admin_id   Int      // Foreign key to Admin model
+  group     Group    @relation(fields: [group_id], references: [id])  // Define relation to Group
+  task      Task     @relation(fields: [task_id], references: [id])   // Define relation to Task
+  user      User     @relation(fields: [user_id], references: [id])   // Define relation to User
+  admin     Admin    @relation(fields: [admin_id], references: [id])  // Define relation to Admin
+
+  @@map("submisions")
+}
+
+
+
+model Certification {
   id       Int     @id @default(autoincrement())
   image    String
   user_id  Int
   admin_id Int?
   grade    Int?    @db.SmallInt
   status   String? @db.VarChar
-  admins   admins? @relation(fields: [admin_id], references: [id], onDelete: Restrict)
-  users    users   @relation(fields: [user_id], references: [id])
+  admin    Admin?  @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+  user     User    @relation(fields: [user_id], references: [id])
+
+  @@map("certifications")
 }
 
-model groups {
-  id         Int          @id @default(autoincrement())
-  groupName  String
-  submisions submisions[]
-  tasks      tasks[]
-  users      users[]
+model Topic {
+  id        String      @id @default(uuid())
+  title     String
+  user_id    Int
+  questions Question[]
+  User      User        @relation(fields: [user_id], references: [id])
+
+  @@map("topics")
 }
 
-model moduls {
-  id        Int       @id @default(autoincrement())
-  name      String
-  file      String
-  user_id   Int?
-  admin_id  Int?
-  status    Boolean?
-  opened_at DateTime? @db.Timestamp(6)
-  closed_at DateTime? @db.Timestamp(6)
-  admins    admins?   @relation(fields: [admin_id], references: [id], onDelete: Restrict)
-  users     users?    @relation(fields: [user_id], references: [id], onDelete: Restrict)
-}
-
-model questions {
-  id        String    @id
+model Question {
+  id        String   @id @default(uuid())
   messages  String
   image     String?
-  createdAt DateTime  @default(now())
-  userId    Int
-  topicId   String
-  answers   answers[]
-  topics    topics    @relation(fields: [topicId], references: [id])
-  users     users     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  user_id    Int
+  topic_id   String
+  answers   Answer[]
+  Topic     Topic    @relation(fields: [topic_id], references: [id])
+  User      User     @relation(fields: [user_id], references: [id])
+
+  @@map("questions")
 }
 
-model submisions {
-  id         Int       @id @default(autoincrement())
-  file       String
-  submitted  Boolean?  @default(false)
-  group_id   Int?
-  task_id    Int?
-  user_id    Int?
-  admin_id   Int?
-  created_at DateTime? @db.Timestamp(6)
-  status     String?
-  grade      Int?      @db.SmallInt
-  admins     admins?   @relation(fields: [admin_id], references: [id], onDelete: Restrict)
-  groups     groups?   @relation(fields: [group_id], references: [id], onDelete: Restrict)
-  tasks      tasks?    @relation(fields: [task_id], references: [id], onDelete: Restrict)
-  users      users?    @relation(fields: [user_id], references: [id], onDelete: Restrict)
+model Answer {
+  id         String    @id @default(uuid())
+  messages   String
+  image      String?
+  createdAt  DateTime  @default(now())
+  user_id     Int
+  question_id String
+  Questions  Question  @relation(fields: [question_id], references: [id])
+  User       User      @relation(fields: [user_id], references: [id])
+
+  @@map("answers")
 }
 
-model tasks {
-  id          Int          @id @default(autoincrement())
-  opened_at   DateTime     @db.Timestamp(6)
-  title       String
-  groupId     Int?
-  closed_at   DateTime?    @db.Timestamp(6)
-  module      String?      @db.VarChar
-  description String?
-  file        String?
-  submisions  submisions[]
-  groups      groups?      @relation(fields: [groupId], references: [id], onDelete: Restrict)
+model Group {
+  id        Int      @id @default(autoincrement())
+  groupName String
+  user_id     Int
+  User       User     @relation(fields: [user_id], references: [id])
+  tasks     Task[]   // One-to-many relationship with Task
+  submissions Submission[] // Add this field to link Group to Submission
+
+  @@map("groups")
 }
 
-model topics {
-  id        String      @id
-  title     String
-  userId    Int
-  questions questions[]
-  users     users       @relation(fields: [userId], references: [id])
-}
+model Task {
+  id          Int      @id @default(autoincrement())
+  taskName    String
+  description String
+  group_id     Int      // Foreign key to Group
+  group       Group    @relation(fields: [group_id], references: [id]) // Define the relation to Group
+  submissions Submission[] // One-to-many relationship with Submission
 
-model users {
-  id             Int              @id @default(autoincrement())
-  name           String
-  nim            String           @unique
-  className      String
-  noHp           String
-  gender         String
-  email          String           @unique
-  password       String
-  major          String
-  faculty        String
-  document       String
-  github         String
-  year           Int
-  group_id       Int?
-  answers        answers[]
-  certifications certifications[]
-  moduls         moduls[]
-  questions      questions[]
-  submisions     submisions[]
-  topics         topics[]
-  groups         groups?          @relation(fields: [group_id], references: [id])
+  @@map("tasks")
 }

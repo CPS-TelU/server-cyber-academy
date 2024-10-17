@@ -1,5 +1,5 @@
 const answerRepository = require("../repository/answerRepository.js");
-const imagekit = require("../libs/imagekit.js");
+const imagekit = require("../libs/imageKit.js");
 
 const createAnswer = async (messages, file, user_id, question_id) => {
   try {

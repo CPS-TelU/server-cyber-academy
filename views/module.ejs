@@ -11,27 +11,23 @@
 <body>
   <div class="container">
     <!-- <h1>Tasks List</h1> -->
-    <a href="/cms/tasks/add" class="btn btn-success">NEW</a>
+    <a href="/cms/module/add" class="btn btn-success">NEW</a>
     <table class="table table-striped">
       <thead>
         <tr>
           <th>ID</th>
-          <th>Title</th>
-          <th>Module</th>
+          <th>Name</th>
           <th>Opened At</th>
-          <th>Closed At</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        <% taskList.forEach(task => { %>
+        <% moduleList.forEach(module => { %>
           <tr>
-            <td><%= task.id %></td>
-            <td><%= task.title %></td>
-            <td><%= task.module %></td>
-            <td><%= task.opened_at %></td>
-            <td><%= task.closed_at %></td>
-            <td><a href="/cms/tasks/edit" class="btn btn-primary">Edit</a></td>
+            <td><%= module.id %></td>
+            <td><%= module.name %></td>
+            <td><%= module.opened_at %></td>
+            <td><a href="#" class="btn btn-primary">Edit</a></td>
           </tr>
         <% }) %>
       </tbody>

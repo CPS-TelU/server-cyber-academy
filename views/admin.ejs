@@ -56,7 +56,7 @@
                     <td><%= participant.nama %></td>
                     <td><%= participant.nim %></td>
                     <td><%= participant.className %></td>
-                    <td><%= participant.group %></td>
+                    <td><%= participant.groups ? participant.groups.groupName : 'No Group' %></td>
                     <td><%= participant.git %></td>
                 </tr>
             <% }) %>

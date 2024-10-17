@@ -5,13 +5,14 @@ const topicRoutes = require("./routes/topicRoutes.js");
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
 const { Server } = require("socket.io");
-const userAuthRoutes = require('./routes/userAuthRoutes')
-const adminCmsRoutes = require('./routes/adminCmsRoutes')
-const adminRoutes = require('./routes/adminroutes.js')
+const userAuthRoutes = require("./routes/userAuthRoutes");
+const adminCmsRoutes = require("./routes/adminCmsRoutes");
+const adminRoutes = require("./routes/adminroutes.js");
+const userRoutes = require("./routes/userRoutes.js");
 
 const app = express();
-const path = require('path');
-const expressLayouts = require('express-ejs-layouts');
+const path = require("path");
+const expressLayouts = require("express-ejs-layouts");
 
 require("dotenv").config();
 let corsOptions = {
@@ -20,7 +21,7 @@ let corsOptions = {
   credentials: true,
 };
 
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 app.use(express.json());
@@ -30,15 +31,17 @@ app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(expressLayouts);
-app.set('layout', 'layout');
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+app.set("layout", "layout");
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 app.use("/api/auth", userAuthRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/cms", adminCmsRoutes);
+app.use("/api/user", userRoutes);
+
 //server
 const server = http.createServer(app);
 const io = new Server(server, {

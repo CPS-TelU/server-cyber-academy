@@ -17,6 +17,15 @@ Content-Type: application/json
     "github": "https://github.com/sayyidz"
 }
 
+### login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+    "nim" : "1101213340",
+    "password" : "sayyid123"
+}
+
 ### change password
 POST http://localhost:3000/auth/change-password
 Content-Type: application/json
@@ -27,7 +36,7 @@ Content-Type: application/json
 }
 
 ### forgot password
-POST http://localhost:3000/user/forgot-password
+POST http://localhost:3000/api/user/forgot-password
 Content-Type: application/json
 
 {

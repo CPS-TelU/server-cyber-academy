@@ -8,6 +8,7 @@ const { Server } = require("socket.io");
 const userAuthRoutes = require("./routes/userAuthRoutes");
 const adminCmsRoutes = require("./routes/adminCmsRoutes");
 const adminRoutes = require("./routes/adminroutes.js");
+const userRoutes = require("./routes/userRoutes.js");
 
 const app = express();
 const path = require("path");
@@ -39,6 +40,8 @@ app.get("/", (req, res) => {
 app.use("/api/auth", userAuthRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/cms", adminCmsRoutes);
+app.use("/api/user", userRoutes);
+
 //server
 const server = http.createServer(app);
 const io = new Server(server, {

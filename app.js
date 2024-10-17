@@ -7,7 +7,6 @@ const answerRoutes = require("./routes/answerRoutes.js");
 const moduleRoutes = require("./routes/moduleRoutes.js");
 const userAuthRoutes = require("./routes/userAuthRoutes.js");
 const { Server } = require("socket.io");
-const userAuthRoutes = require("./routes/userAuthRoutes");
 const adminCmsRoutes = require("./routes/adminCmsRoutes");
 const adminRoutes = require("./routes/adminroutes.js");
 const userRoutes = require("./routes/userRoutes.js");

@@ -76,7 +76,7 @@ model Submission {
 
 
 
-model certifications {
+model Certification {
   id       Int     @id @default(autoincrement())
   image    String
   user_id  Int
@@ -129,8 +129,8 @@ model Answer {
 model Group {
   id        Int      @id @default(autoincrement())
   groupName String
-  userId     Int
-  User       User     @relation(fields: [userId], references: [id])
+  user_id     Int
+  User       User     @relation(fields: [user_id], references: [id])
   tasks     Task[]   // One-to-many relationship with Task
   submissions Submission[] // Add this field to link Group to Submission
 
@@ -141,8 +141,8 @@ model Task {
   id          Int      @id @default(autoincrement())
   taskName    String
   description String
-  groupId     Int      // Foreign key to Group
-  group       Group    @relation(fields: [groupId], references: [id]) // Define the relation to Group
+  group_id     Int      // Foreign key to Group
+  group       Group    @relation(fields: [group_id], references: [id]) // Define the relation to Group
   submissions Submission[] // One-to-many relationship with Submission
 
   @@map("tasks")

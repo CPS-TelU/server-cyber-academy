@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,97 +7,143 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// This model contains row level security and requires additional setup for migrations.
 model User {
-  id            Int           @id @default(autoincrement())  
-  name          String                                       
-  nim           String                                       
-  class         String                                       
-  noHp          String                                       
+  id            Int             @id @default(autoincrement())
+  name          String
+  nim           String
+  className     String
+  noHp          String
   gender        String
-  email         String
-  password      String                                       
-  major         String                                       
-  faculty       String                                       
+  email         String          
+  password      String
+  major         String
+  faculty       String
   document      String
-  github        String                                       
-  year          Int                                          
-  modul         Modul[]                                      
-  submission    Submission[]                                 
-  certification Certification[]                             
-  questions     Questions[]                                  // Relasi ke Questions yang dibuat oleh user
-  answers       Answer[]                                     // Relasi ke Answers yang dibuat oleh user
+  github        String
+  year          Int
+  answer      Answer[]
+  certification Certification[]
+  modul         Modul[]
+  questions     Question[]
+  submission    Submission[]
   topics        Topic[]
+  groups        Group[]     
+
+  @@map("users")  
 }
 
 model Admin {
-  id            Int           @id @default(autoincrement())
-  username      String                                       
-  password      String                                       
-  name          String                                       
-  modul         Modul[]                                      // Hubungan ke modul-modul yang diatur oleh admin
-  submission    Submission[]                                 // Hubungan ke submission yang diawasi admin
-  certification Certification[]                             // Hubungan ke sertifikasi yang diurus oleh admin
+  id            Int             @id @default(autoincrement())
+  username      String
+  password      String
+  name          String
+  certification Certification[]
+  modul         Modul[]
+  submission  Submission[]    // Use plural for consistency
+
+  @@map("admins")
 }
 
 model Modul {
-  id        Int     @id @default(autoincrement())            
-  name      String                                           
-  link      String                                           
-  user_id   Int                                              
-  admin_id  Int                                              // ID admin yang mengelola modul
-  status    Boolean                                          // Status modul (aktif/tidak)
-  user      User     @relation(fields: [user_id], references: [id])  // Hubungan ke pengguna
-  admin     Admin    @relation(fields: [admin_id], references: [id]) // Hubungan ke admin
+  id       Int     @id @default(autoincrement())
+  name     String
+  link     String
+  user_id  Int
+  admin_id Int
+  status   Boolean
+  admin    Admin   @relation(fields: [admin_id], references: [id])
+  user     User    @relation(fields: [user_id], references: [id])
+
+  @@map("moduls")
 }
 
 model Submission {
-  id        Int     @id @default(autoincrement())           
-  openedAt  DateTime                                        
-  closedAt  DateTime                                        
-  file      String                                          
-  user_id   Int                                             
-  admin_id  Int                                             
-  user      User     @relation(fields: [user_id], references: [id])  // Hubungan ke pengguna
-  admin     Admin    @relation(fields: [admin_id], references: [id]) // Hubungan ke admin
+  id        Int      @id @default(autoincrement())
+  file      String
+  submitted Boolean  @default(false)
+  group_id   Int      // Foreign key to Group model
+  task_id    Int      // Foreign key to Task model
+  user_id    Int      // Foreign key to User model
+  admin_id   Int      // Foreign key to Admin model
+  group     Group    @relation(fields: [group_id], references: [id])  // Define relation to Group
+  task      Task     @relation(fields: [task_id], references: [id])   // Define relation to Task
+  user      User     @relation(fields: [user_id], references: [id])   // Define relation to User
+  admin     Admin    @relation(fields: [admin_id], references: [id])  // Define relation to Admin
+
+  @@map("submisions")
 }
 
+
+
 model Certification {
-  id        Int     @id @default(autoincrement())            
-  image     String                                           
-  name      String                                           
-  user_id   Int                                              // ID pengguna yang menerima sertifikasi
-  admin_id  Int                                              // ID admin yang mengeluarkan sertifikasi
-  user      User     @relation(fields: [user_id], references: [id])  // Hubungan ke pengguna
-  admin     Admin    @relation(fields: [admin_id], references: [id]) // Hubungan ke admin
+  id       Int     @id @default(autoincrement())
+  image    String
+  user_id  Int
+  admin_id Int?
+  grade    Int?    @db.SmallInt
+  status   String? @db.VarChar
+  admin    Admin?  @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+  user     User    @relation(fields: [user_id], references: [id])
+
+  @@map("certifications")
 }
 
 model Topic {
-  id        String      @id @default(uuid())                 
+  id        String      @id @default(uuid())
   title     String
-  userId    Int
-  User      User        @relation(fields: [userId], references: [id]) // Relasi ke pengguna yang membuat topik
-  questions Questions[] // Relasi one-to-many ke pertanyaan
+  user_id    Int
+  questions Question[]
+  User      User        @relation(fields: [user_id], references: [id])
+
+  @@map("topics")
 }
 
-model Questions {
-  id        String      @id @default(uuid())                    
+model Question {
+  id        String   @id @default(uuid())
   messages  String
-  image     String?                                           
-  createdAt DateTime    @default(now())                         
-  userId    Int                                              // ID pengguna yang mengirim pesan
-  topicId   String                                           // ID topik di mana pesan dikirim
-  User      User        @relation(fields: [userId], references: [id])   // Hubungan ke pengguna yang mengirim pesan
-  Topic     Topic       @relation(fields: [topicId], references: [id])  // Hubungan ke topik di mana pesan dikirim
-  answers   Answer[]    // Relasi one-to-many ke jawaban
+  image     String?
+  createdAt DateTime @default(now())
+  user_id    Int
+  topic_id   String
+  answers   Answer[]
+  Topic     Topic    @relation(fields: [topic_id], references: [id])
+  User      User     @relation(fields: [user_id], references: [id])
+
+  @@map("questions")
 }
 
 model Answer {
-  id        String         @id @default(uuid()) 
-  messages  String
-  image     String?
-  createdAt DateTime    @default(now()) 
-  userId    Int
-  questionId String     // ID pertanyaan yang dijawab
-  User      User        @relation(fields: [userId], references: [id]) // Hubungan ke pengguna yang menjawab
-  Questions Questions   @relation(fields: [questionId], references: [id]) // Hubungan ke pertanyaan yang dijawab
+  id         String    @id @default(uuid())
+  messages   String
+  image      String?
+  createdAt  DateTime  @default(now())
+  user_id     Int
+  question_id String
+  Questions  Question  @relation(fields: [question_id], references: [id])
+  User       User      @relation(fields: [user_id], references: [id])
+
+  @@map("answers")
+}
+
+model Group {
+  id        Int      @id @default(autoincrement())
+  groupName String
+  user_id     Int
+  User       User     @relation(fields: [user_id], references: [id])
+  tasks     Task[]   // One-to-many relationship with Task
+  submissions Submission[] // Add this field to link Group to Submission
+
+  @@map("groups")
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  taskName    String
+  description String
+  group_id     Int      // Foreign key to Group
+  group       Group    @relation(fields: [group_id], references: [id]) // Define the relation to Group
+  submissions Submission[] // One-to-many relationship with Submission
+
+  @@map("tasks")
 }

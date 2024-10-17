@@ -1,0 +1,41 @@
+<!-- views/tasks.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks List</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- <h1>Tasks List</h1> -->
+    <a href="/cms/tasks/add" class="btn btn-success">NEW</a>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Module</th>
+          <th>Opened At</th>
+          <th>Closed At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% taskList.forEach(task => { %>
+          <tr>
+            <td><%= task.id %></td>
+            <td><%= task.title %></td>
+            <td><%= task.module %></td>
+            <td><%= task.opened_at %></td>
+            <td><%= task.closed_at %></td>
+            <td><a href="/cms/tasks/edit" class="btn btn-primary">Edit</a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

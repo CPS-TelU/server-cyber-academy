@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submission List</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- <h1>Certificate Upload</h1> -->
+    <a href="/cms/certificate/add" class="btn btn-success">NEW</a>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Group</th>
+          <th>Grade</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% certificateList.forEach(certificate => { %>
+          <tr>
+            <td><%= certificate.id %></td>
+            <td><%= certificate.users.name %></td>
+            <td><%= certificate.group %></td>
+            <td><%= certificate.grade %></td>
+            <td><%= certificate.status %></td>
+            <td>
+              <button class="btn btn-primary">Edit</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

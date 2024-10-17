@@ -6,19 +6,25 @@ const prisma = new PrismaClient();
 router.get('/admin', async (req, res) => {
     try {
         // Ambil semua data peserta dari tabel user
-        const users = await prisma.users.findMany();
+        const users = await prisma.users.findMany({
+          include: {
+              groups: true, // Ini akan memuat relasi groups untuk setiap user
+          },
+      });
         const tasks = await prisma.tasks.findMany();
+        const submissions = await prisma.submisions.findMany();
 
         // Hitung jumlah total peserta
         const participantsCount = users.length;
         const tasksCount = tasks.length;
+        const submissionsCount = submissions.length;
 
         // Render data ke halaman admin
         res.render('admin', {
             title: 'Admin Dashboard',
             participants: participantsCount, // Jumlah peserta
             ongoingTasks: tasksCount,                // Data statis sebagai placeholder
-            submittedTasks: 8,               // Data statis sebagai placeholder
+            submittedTasks: submissionsCount,               // Data statis sebagai placeholder
             newMessages: 5,                  // Data statis sebagai placeholder
             participantList: users.map(user => ({
                 id: user.id,

@@ -1,27 +1,22 @@
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
-const path = require('path');
-const expressLayouts = require('express-ejs-layouts');
-
 const topicRoutes = require("./routes/topicRoutes.js");
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
+const { Server } = require("socket.io");
 const userAuthRoutes = require('./routes/userAuthRoutes')
 const adminCmsRoutes = require('./routes/adminCmsRoutes')
 const adminRoutes = require('./routes/adminroutes.js')
 
-const moduleRoutes = require("./routes/moduleRoutes.js");
-const { Server } = require("socket.io");
 const app = express();
+const path = require('path');
+const expressLayouts = require('express-ejs-layouts');
+
 require("dotenv").config();
-// CORS options
 let corsOptions = {
   origin: ["http://localhost:3000", "https://www.cpslaboratory.com"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  origin: "http://localhost:3000", // Or use process.env.CLIENT_URL if you want to move to .env
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
 
@@ -30,40 +25,33 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(expressLayouts);
-app.set('layout', 'layout');
-
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
-app.use("/api/auth", userAuthRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/cms", adminCmsRoutes);
+//routes
 app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
-app.use("/api", moduleRoutes);
 
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(expressLayouts);
+app.set('layout', 'layout');
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+app.use("/api/auth", userAuthRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/cms", adminCmsRoutes);
+//server
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: corsOptions,
 });
-// Socket.io setup
 io.on("connection", (socket) => {
   console.log("A user connected");
-  // Listening for new question events
-  socket.on("newQuestion", (questionData) => {
-    io.emit("questionBroadcast", questionData); // Broadcast question to all clients
-  });
-  // Listening for new answer events
-  socket.on("newAnswer", (answerData) => {
-    io.emit("answerBroadcast", answerData); // Broadcast answer to all clients
+  socket.on("newMessage", (message) => {
+    io.emit("messageBroadcast", message);
   });
   socket.on("disconnect", () => {
     console.log("A user disconnected");
   });
 });
 
-module.exports = app, server
+module.exports = { app, server };

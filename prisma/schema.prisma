@@ -7,103 +7,129 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model User {
-  id            Int             @id @default(autoincrement())
-  name          String
-  nim           String
-  className     String
-  noHp          String
-  gender        String
-  email         String
-  password      String
-  major         String
-  faculty       String
-  document      String
-  github        String
-  year          Int
-  answers       Answer[]
-  certification Certification[]
-  modul         Modul[]
-  questions     Questions[]
-  submission    Submission[]
-  topics        Topic[]
+model admins {
+  id             Int              @id @default(autoincrement())
+  username       String
+  password       String
+  name           String
+  certifications certifications[]
+  moduls         moduls[]
+  submisions     submisions[]
 }
 
-model Admin {
-  id            Int             @id @default(autoincrement())
-  username      String
-  password      String
-  name          String
-  Certification Certification[]
-  modul         Modul[]
-  submission    Submission[]
-}
-
-model Modul {
-  id       Int     @id @default(autoincrement())
-  name     String
-  link     String
-  user_id  Int
-  admin_id Int
-  status   Boolean
-  admin    Admin   @relation(fields: [admin_id], references: [id])
-  user     User    @relation(fields: [user_id], references: [id])
-}
-
-model Submission {
-  id          Int      @id @default(autoincrement())
-  openedAt    DateTime
-  closedAt    DateTime
-  file        String
-  user_id     Int
-  admin_id    Int
-  title       String?  @db.VarChar
-  module      String?  @db.VarChar
-  description String?
-  admin       Admin    @relation(fields: [admin_id], references: [id])
-  user        User     @relation(fields: [user_id], references: [id])
-}
-
-model Certification {
-  id       Int     @id @default(autoincrement())
-  image    String
-  name     String?
-  user_id  Int
-  admin_id Int?
-  grade    Int?    @db.SmallInt
-  status   String? @db.VarChar
-  Admin    Admin?  @relation(fields: [admin_id], references: [id], onDelete: Restrict)
-  user     User    @relation(fields: [user_id], references: [id])
-}
-
-model Topic {
-  id        String      @id @default(uuid())
-  title     String
-  userId    Int?
-  questions Questions[]
-  User      User?        @relation(fields: [userId], references: [id])
-}
-
-model Questions {
-  id        String   @id @default(uuid())
-  messages  String
-  image     String?
-  createdAt DateTime @default(now())
-  userId    Int
-  topicId   String
-  answers   Answer[]
-  Topic     Topic    @relation(fields: [topicId], references: [id])
-  User      User     @relation(fields: [userId], references: [id])
-}
-
-model Answer {
-  id         String    @id @default(uuid())
+model answers {
+  id         String    @id
   messages   String
   image      String?
   createdAt  DateTime  @default(now())
   userId     Int
   questionId String
-  Questions  Questions @relation(fields: [questionId], references: [id])
-  User       User      @relation(fields: [userId], references: [id])
+  questions  questions @relation(fields: [questionId], references: [id])
+  users      users     @relation(fields: [userId], references: [id])
+}
+
+model certifications {
+  id       Int     @id @default(autoincrement())
+  image    String
+  user_id  Int
+  admin_id Int?
+  grade    Int?    @db.SmallInt
+  status   String? @db.VarChar
+  admins   admins? @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+  users    users   @relation(fields: [user_id], references: [id])
+}
+
+model groups {
+  id         Int          @id @default(autoincrement())
+  groupName  String
+  submisions submisions[]
+  tasks      tasks[]
+  users      users[]
+}
+
+model moduls {
+  id        Int       @id @default(autoincrement())
+  name      String
+  file      String
+  user_id   Int?
+  admin_id  Int?
+  status    Boolean?
+  opened_at DateTime? @db.Timestamp(6)
+  closed_at DateTime? @db.Timestamp(6)
+  admins    admins?   @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+  users     users?    @relation(fields: [user_id], references: [id], onDelete: Restrict)
+}
+
+model questions {
+  id        String    @id
+  messages  String
+  image     String?
+  createdAt DateTime  @default(now())
+  userId    Int
+  topicId   String
+  answers   answers[]
+  topics    topics    @relation(fields: [topicId], references: [id])
+  users     users     @relation(fields: [userId], references: [id])
+}
+
+model submisions {
+  id         Int       @id @default(autoincrement())
+  file       String
+  submitted  Boolean?  @default(false)
+  group_id   Int?
+  task_id    Int?
+  user_id    Int?
+  admin_id   Int?
+  created_at DateTime? @db.Timestamp(6)
+  status     String?
+  grade      Int?      @db.SmallInt
+  admins     admins?   @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+  groups     groups?   @relation(fields: [group_id], references: [id], onDelete: Restrict)
+  tasks      tasks?    @relation(fields: [task_id], references: [id], onDelete: Restrict)
+  users      users?    @relation(fields: [user_id], references: [id], onDelete: Restrict)
+}
+
+model tasks {
+  id          Int          @id @default(autoincrement())
+  opened_at   DateTime     @db.Timestamp(6)
+  title       String
+  groupId     Int?
+  closed_at   DateTime?    @db.Timestamp(6)
+  module      String?      @db.VarChar
+  description String?
+  file        String?
+  submisions  submisions[]
+  groups      groups?      @relation(fields: [groupId], references: [id], onDelete: Restrict)
+}
+
+model topics {
+  id        String      @id
+  title     String
+  userId    Int
+  questions questions[]
+  users     users       @relation(fields: [userId], references: [id])
+}
+
+model users {
+  id             Int              @id @default(autoincrement())
+  name           String
+  nim            String           @unique
+  className      String
+  noHp           String
+  gender         String
+  email          String           @unique
+  password       String
+  major          String
+  faculty        String
+  document       String
+  github         String
+  year           Int
+  group_id       Int?
+  answers        answers[]
+  certifications certifications[]
+  moduls         moduls[]
+  questions      questions[]
+  submisions     submisions[]
+  topics         topics[]
+  groups         groups?          @relation(fields: [group_id], references: [id])
 }

@@ -4,6 +4,9 @@ const http = require("http");
 const topicRoutes = require("./routes/topicRoutes.js");
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
+const moduleRoutes = require("./routes/moduleRoutes.js");
+const userAuthRoutes = require("./routes/userAuthRoutes.js");
+
 const { Server } = require("socket.io");
 const userAuthRoutes = require("./routes/userAuthRoutes");
 const adminCmsRoutes = require("./routes/adminCmsRoutes");
@@ -31,6 +34,10 @@ app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
 
+app.use("/api", moduleRoutes);
+app.use("/user", userAuthRoutes);
+
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(expressLayouts);
 app.set("layout", "layout");
@@ -49,8 +56,15 @@ const io = new Server(server, {
 });
 io.on("connection", (socket) => {
   console.log("A user connected");
+
   socket.on("newMessage", (message) => {
     io.emit("messageBroadcast", message);
+
+  socket.on("newQuestion", (questionData) => {
+    io.emit("questionBroadcast", questionData);
+  });
+  socket.on("newAnswer", (answerData) => {
+    io.emit("answerBroadcast", answerData);
   });
   socket.on("disconnect", () => {
     console.log("A user disconnected");

@@ -1,6 +1,6 @@
 const questionRepository = require("../repository/questionRepository.js");
 const imagekit = require("../libs/imagekit.js");
-const createQuestion = async (messages, file, userId, topicId) => {
+const createQuestion = async (messages, file, user_id, topic_id) => {
   try {
     let image = null;
     if (file) {
@@ -14,8 +14,8 @@ const createQuestion = async (messages, file, userId, topicId) => {
     const questionData = {
       messages,
       image,
-      userId,
-      topicId,
+      user_id,
+      topic_id,
     };
     return await questionRepository.createQuestion(questionData);
   } catch (error) {
@@ -51,8 +51,8 @@ const updatedQuestion = async (id, message, files) => {
 const getQuestionById = async (id) => {
   return questionRepository.getQuestionById(id);
 };
-const getQuestionsByTopicId = async (topicId) => {
-  return questionRepository.getQuestionsByTopicId(topicId);
+const getQuestionsByTopicId = async (topic_id) => {
+  return questionRepository.getQuestionsByTopicId(topic_id);
 };
 const deletedQuestion = async (id) => {
   return questionRepository.deleteQuestion(id);

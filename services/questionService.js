@@ -1,5 +1,5 @@
 const questionRepository = require("../repository/questionRepository.js");
-const imagekit = require("../libs/imagekit.js");
+const imagekit = require("../libs/imageKit.js");
 const createQuestion = async (messages, file, user_id, topic_id) => {
   try {
     let image = null;

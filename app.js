@@ -1,8 +1,9 @@
 const express = require('express');
 const cors = require("cors");
 const http = require("http");
-const path = require('path');
-const expressLayouts = require('express-ejs-layouts');
+const path = require("path");
+const expressLayouts = require("express-ejs-layouts");
+const { Server } = require("socket.io");
 
 const topicRoutes = require("./routes/topicRoutes.js");
 // const questionRoutes = require("./routes/questionRoutes.js");
@@ -17,14 +18,21 @@ const groupRoutes = require('./routes/groupRoutes.js');
 const submissionRoutes = require('./routes/submissionRoutes');
 
 const { Server } = require("socket.io");
+const questionRoutes = require("./routes/questionRoutes.js");
+const answerRoutes = require("./routes/answerRoutes.js");
+const moduleRoutes = require("./routes/moduleRoutes.js");
+const userAuthRoutes = require("./routes/userAuthRoutes.js");
+const adminCmsRoutes = require("./routes/adminCmsRoutes");
+const adminRoutes = require("./routes/adminroutes.js");
+const userRoutes = require("./routes/userRoutes.js");
+
 require("dotenv").config();
 
 const app = express();
 
 let corsOptions = {
-  origin: "http://localhost:3000",  // Or use process.env.CLIENT_URL if you want to move to .env
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  origin: ["http://localhost:3000", "https://www.cpslaboratory.com"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
 };
 
@@ -33,10 +41,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressLayouts);
 app.set('layout', 'layout');
-
-// Attach Socket.io to request object
-const server = http.createServer(app);
-const io = new Server(server, { cors: corsOptions });
 
 app.use((req, res, next) => {
   req.io = io;  // Attach io to the request object
@@ -58,17 +62,53 @@ app.use('/api/groups', groupRoutes);
 app.use('/api/submissions', submissionRoutes);
 
 // Server setup for Socket.io
+// Middleware
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+app.use(expressLayouts);
+app.set("view engine", "ejs");
+app.set("layout", "layout");
+
+// Routes
+app.use("/discussion", topicRoutes);
+app.use("/discussion", questionRoutes);
+app.use("/discussion", answerRoutes);
+
+app.use("/api", moduleRoutes);
+app.use("/user", userAuthRoutes);
+
+app.use(express.static(path.join(__dirname, "public")));
+app.use(expressLayouts);
+app.set("layout", "layout");
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+app.use("/api/auth", userAuthRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/cms", adminCmsRoutes);
+app.use("/api/user", userRoutes);
+
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
+// Server and Socket.io setup
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: corsOptions,
+});
+
+// Socket.io connections
 io.on("connection", (socket) => {
   console.log("A user connected");
-
-  // Listening for new question events
   socket.on("newQuestion", (questionData) => {
-    io.emit("questionBroadcast", questionData);  // Broadcast question to all clients
+    io.emit("questionBroadcast", questionData);
   });
 
-  // Listening for new answer events
   socket.on("newAnswer", (answerData) => {
-    io.emit("answerBroadcast", answerData);  // Broadcast answer to all clients
+    io.emit("answerBroadcast", answerData);
   });
 
   socket.on("disconnect", () => {

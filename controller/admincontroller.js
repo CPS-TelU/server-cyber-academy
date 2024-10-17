@@ -1,18 +1,14 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const { handleFileUpload, handleSertifUpload, handleSubmisUpload, registerAdminService } = require('../services/adminservice');
+const { handleFileUpload, handleSertifUpload, handleTaskUpload, registerAdminService } = require('../services/adminservice');
 
 const uploadFile = async (req, res) => {
     try {
         // Memanggil service untuk mengunggah file ke ImageKit
-        const fileData = await handleFileUpload(req.file);
+        const fileData = await handleFileUpload(req.body.name, req.file, req.body.opened_at);
 
         // Mengembalikan respons dengan data file yang berhasil diunggah
-        res.status(200).json({
-            success: true,
-            message: 'File uploaded successfully!',
-            data: fileData
-        });
+        res.redirect('/cms/module');
     } catch (error) {
         // Menangani error jika terjadi masalah
         res.status(500).json({
@@ -25,12 +21,15 @@ const uploadFile = async (req, res) => {
 
 const uploadSerti = async (req, res) => {
     try {
-        const userId = parseInt(req.body.userId, 10);
+        const user_id = parseInt(req.body.user_id, 10);
         const gradeInt = parseInt(req.body.grade, 10); // Konversi userId menjadi integer
 
-        const user = await prisma.user.findUnique({
+        console.log('User ID:', user_id);  // Log untuk melihat user_id
+        console.log('Grade:', gradeInt);   // Log untuk melihat grade
+
+        const user = await prisma.users.findUnique({
             where: {
-                id: userId,
+                id: user_id,
             },
         });
 
@@ -41,7 +40,7 @@ const uploadSerti = async (req, res) => {
                 message: 'User not found',
             });
         }
-        const fileData = await handleSertifUpload(gradeInt, req.body.status, req.file, userId);
+        const fileData = await handleSertifUpload(gradeInt, req.body.status, req.file, user_id);
 
         res.redirect('/cms/certificate');
 
@@ -55,15 +54,12 @@ const uploadSerti = async (req, res) => {
 };
 
 
-const uploadSubmis = async (req, res) => {
+const uploadTask = async (req, res) => {
     try {
 
-        const fileData = await handleSubmisUpload(req.file);
-        res.status(200).json({
-            success: true,
-            message: 'File uploaded successfully!',
-            data: fileData
-        });
+        const fileData = await handleTaskUpload(req.body.title, req.body.module, req.body.openedAt, req.body.closedAt, req.body.description, req.file);
+
+        res.redirect('/cms/tasks');
     } catch (error) {
         res.status(500).json({
             success: false,
@@ -87,5 +83,5 @@ const registerAdminController = async (req, res) => {
 }
 
 module.exports = {
-    uploadFile, uploadSerti, uploadSubmis, registerAdminController
+    uploadFile, uploadSerti, uploadTask, registerAdminController
 };

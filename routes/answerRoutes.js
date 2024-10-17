@@ -5,7 +5,7 @@ const {
   getAnswers,
   findAnswerByQuestionId,
 } = require("../controller/answerController.js");
-const upload = require("../middleware/mutler.js");
+const upload = require("../middleware/multer.js");
 
 const router = express.Router();
 router.post("/answer", upload.single("image"), createAnswer);

@@ -15,7 +15,7 @@ model User {
   className     String
   noHp          String
   gender        String
-  email         String
+  email         String          
   password      String
   major         String
   faculty       String
@@ -81,7 +81,6 @@ model Submission {
 model Certification {
   id       Int     @id @default(autoincrement())
   image    String
-  name     String?
   user_id  Int
   admin_id Int?
   grade    Int?    @db.SmallInt
@@ -107,11 +106,11 @@ model Question {
   messages  String
   image     String?
   createdAt DateTime @default(now())
-  userId    Int
-  topicId   String
+  user_id    Int
+  topic_id   String
   answers   Answer[]
-  Topic     Topic    @relation(fields: [topicId], references: [id])
-  User      User     @relation(fields: [userId], references: [id])
+  Topic     Topic    @relation(fields: [topic_id], references: [id])
+  User      User     @relation(fields: [user_id], references: [id])
 
   @@map("questions")
 }
@@ -132,24 +131,21 @@ model Answer {
 model Group {
   id          Int          @id @default(autoincrement())
   groupName   String
-  submissions Submission[]
-  tasks       Task[]
-  users       User[]
+  user_id     Int
+  tasks       Task[]       // One-to-many relationship with Task
+  submissions Submission[] // One-to-many relationship with Submission
+  users       User[]       // One-to-many relationship with User
 
   @@map("groups")
 }
 
 model Task {
-  id          Int          @id @default(autoincrement())
-  opened_at   DateTime     @db.Timestamp(6)
-  title       String
-  groupId     Int?
-  closed_at   DateTime?    @db.Timestamp(6)
-  module      String?      @db.VarChar
-  description String?
-  file        String?
-  submissions Submission[]
-  group       Group?       @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  id          Int      @id @default(autoincrement())
+  taskName    String
+  description String
+  group_id    Int      // Foreign key to Group
+  group       Group    @relation(fields: [group_id], references: [id]) // Define the relation to Group
+  submissions Submission[] // One-to-many relationship with Submission
 
   @@map("tasks")
 }

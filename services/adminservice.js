@@ -1,7 +1,7 @@
 const imagekit = require('../libs/imagekit');
-const { uploadCertificate, registerAdmin } = require('../repository/adminRepository')
+const { uploadCertificate, registerAdmin, uploadTask, uploadModule } = require('../repository/adminRepository')
 
-const handleFileUpload = async (file) => {
+const handleFileUpload = async (name, file, opened_at) => {
 
     const uploadResponse = await imagekit.upload({
         file: file.buffer.toString('base64'), // Convert buffer to base64 string
@@ -9,6 +9,7 @@ const handleFileUpload = async (file) => {
         folder: '/CA/Modul'
     });
     // Logika pemrosesan file jika ada
+    await uploadModule(name, uploadResponse.url, opened_at)
     return {
         filename: file.originalname,
         path: file.path,
@@ -16,14 +17,14 @@ const handleFileUpload = async (file) => {
     };
 };
 
-const handleSertifUpload = async (grade, status, file, userId) => {
+const handleSertifUpload = async (grade, status, file, user_id) => {
     const uploadResponse = await imagekit.upload({
         file: file.buffer.toString('base64'), 
         fileName: file.originalname,
         folder: '/CA/Sertif'
     });
     
-    await uploadCertificate(grade, status, uploadResponse.url, userId);
+    await uploadCertificate(grade, status, uploadResponse.url, user_id);
     
     return {
         filename: file.originalname,
@@ -33,13 +34,16 @@ const handleSertifUpload = async (grade, status, file, userId) => {
 };
 
 
-const handleSubmisUpload = async (file) => {
+const handleTaskUpload = async (title, module, openedAt, closedAt, description, file) => {
 
     const uploadResponse = await imagekit.upload({
         file: file.buffer.toString('base64'),
         fileName: file.originalname, 
         folder: '/CA/Submission'
     });
+
+    await uploadTask(title, module, openedAt, closedAt, description, uploadResponse.url);
+
     return {
         filename: file.originalname,
         path: file.path,
@@ -56,5 +60,5 @@ const registerAdminService = async (username, password, name) => {
 }
 
 module.exports = {
-    handleFileUpload, handleSertifUpload, handleSubmisUpload, registerAdminService
+    handleFileUpload, handleSertifUpload, handleTaskUpload, registerAdminService
 };

@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// This model contains row level security and requires additional setup for migrations.
 model User {
   id            Int             @id @default(autoincrement())
   name          String
@@ -15,19 +15,22 @@ model User {
   className     String
   noHp          String
   gender        String
-  email         String
+  email         String          
   password      String
   major         String
   faculty       String
   document      String
   github        String
   year          Int
-  answers       Answer[]
+  answer      Answer[]
   certification Certification[]
   modul         Modul[]
-  questions     Questions[]
+  questions     Question[]
   submission    Submission[]
   topics        Topic[]
+  groups        Group[]     
+
+  @@map("users")  
 }
 
 model Admin {
@@ -35,9 +38,11 @@ model Admin {
   username      String
   password      String
   name          String
-  Certification Certification[]
+  certification Certification[]
   modul         Modul[]
-  submission    Submission[]
+  submission  Submission[]    // Use plural for consistency
+
+  @@map("admins")
 }
 
 model Modul {
@@ -49,21 +54,26 @@ model Modul {
   status   Boolean
   admin    Admin   @relation(fields: [admin_id], references: [id])
   user     User    @relation(fields: [user_id], references: [id])
+
+  @@map("moduls")
 }
 
 model Submission {
-  id          Int      @id @default(autoincrement())
-  openedAt    DateTime
-  closedAt    DateTime
-  file        String
-  user_id     Int
-  admin_id    Int
-  title       String?  @db.VarChar
-  module      String?  @db.VarChar
-  description String?
-  admin       Admin    @relation(fields: [admin_id], references: [id])
-  user        User     @relation(fields: [user_id], references: [id])
+  id        Int      @id @default(autoincrement())
+  file      String
+  submitted Boolean  @default(false)
+  group_id   Int      // Foreign key to Group model
+  task_id    Int      // Foreign key to Task model
+  user_id    Int      // Foreign key to User model
+  admin_id   Int      // Foreign key to Admin model
+  group     Group    @relation(fields: [group_id], references: [id])  // Define relation to Group
+  task      Task     @relation(fields: [task_id], references: [id])   // Define relation to Task
+  user      User     @relation(fields: [user_id], references: [id])   // Define relation to User
+  admin     Admin    @relation(fields: [admin_id], references: [id])  // Define relation to Admin
+
+  @@map("submisions")
 }
+
 
 model Certification {
   id       Int     @id @default(autoincrement())
@@ -73,28 +83,34 @@ model Certification {
   admin_id Int?
   grade    Int?    @db.SmallInt
   status   String? @db.VarChar
-  Admin    Admin?  @relation(fields: [admin_id], references: [id], onDelete: Restrict)
+  admin    Admin?  @relation(fields: [admin_id], references: [id], onDelete: Restrict)
   user     User    @relation(fields: [user_id], references: [id])
+
+  @@map("certifications")
 }
 
 model Topic {
   id        String      @id @default(uuid())
   title     String
-  userId    Int
-  questions Questions[]
-  User      User        @relation(fields: [userId], references: [id])
+  user_id    Int
+  questions Question[]
+  User      User        @relation(fields: [user_id], references: [id])
+
+  @@map("topics")
 }
 
-model Questions {
+model Question {
   id        String   @id @default(uuid())
   messages  String
   image     String?
   createdAt DateTime @default(now())
-  userId    Int
-  topicId   String
+  user_id    Int
+  topic_id   String
   answers   Answer[]
-  Topic     Topic    @relation(fields: [topicId], references: [id])
-  User      User     @relation(fields: [userId], references: [id])
+  Topic     Topic    @relation(fields: [topic_id], references: [id])
+  User      User     @relation(fields: [user_id], references: [id])
+
+  @@map("questions")
 }
 
 model Answer {
@@ -102,8 +118,32 @@ model Answer {
   messages   String
   image      String?
   createdAt  DateTime  @default(now())
+  user_id     Int
+  question_id String
+  Questions  Question  @relation(fields: [question_id], references: [id])
+  User       User      @relation(fields: [user_id], references: [id])
+
+  @@map("answers")
+}
+
+model Group {
+  id        Int      @id @default(autoincrement())
+  groupName String
   userId     Int
-  questionId String
-  Questions  Questions @relation(fields: [questionId], references: [id])
-  User       User      @relation(fields: [userId], references: [id])
+  User       User     @relation(fields: [userId], references: [id])
+  tasks     Task[]   // One-to-many relationship with Task
+  submissions Submission[] // Add this field to link Group to Submission
+
+  @@map("groups")
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  taskName    String
+  description String
+  groupId     Int      // Foreign key to Group
+  group       Group    @relation(fields: [groupId], references: [id]) // Define the relation to Group
+  submissions Submission[] // One-to-many relationship with Submission
+
+  @@map("tasks")
 }

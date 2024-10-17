@@ -1,47 +1,42 @@
 const prisma = require("../config/db.js");
-
-const createQuestion = async (question) => {
-  const newQuestion = await prisma.questions.create({
-    data: question,
-  });
-  return newQuestion;
-};
 const getQuestions = async () => {
-  const questions = await prisma.questions.findMany();
-  return questions;
+  return await prisma.question.findMany();
+};
+
+const createQuestion = async (questionData) => {
+  return await prisma.question.create({
+    data: {
+      messages: questionData.messages,
+      image: questionData.image,
+      topic_id: questionData.topic_id,
+      user_id: questionData.user_id,
+    },
+  });
+};
+
+const updateQuestion = async (id, questions) => {
+  return await prisma.question.update({
+    where: { id: parseInt(id) },
+    data: questions,
+  });
+};
+
+const deleteQuestion = async (id) => {
+  return await prisma.question.delete({
+    where: { id: parseInt(id) },
+  });
 };
 const getQuestionById = async (id) => {
-  const question = await prisma.questions.findUnique({
-    where: {
-      id: id,
-    },
+  return await prisma.question.findUnique({
+    where: { id: parseInt(id) },
   });
-  return question;
 };
-const getQuestionsByTopicId = async (topicId) => {
-  const questions = await prisma.questions.findMany({
+const getQuestionsByTopicId = async (topic_id) => {
+  return await prisma.question.findMany({
     where: {
-      topicId: topicId,
+      topicId: parseInt(topic_id),
     },
   });
-  return questions;
-};
-const updateQuestion = async (id, question) => {
-  const updatedQuestion = await prisma.questions.update({
-    where: {
-      id: id,
-    },
-    data: question,
-  });
-  return updatedQuestion;
-};
-const deleteQuestion = async (id) => {
-  const deletedQuestion = await prisma.questions.delete({
-    where: {
-      id: id,
-    },
-  });
-  return deletedQuestion;
 };
 
 module.exports = {

@@ -1,5 +1,5 @@
 ### register
-POST http://localhost:3000/auth/register
+POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 
 {
@@ -23,16 +23,16 @@ Content-Type: application/json
 
 {
     "nim" : "1101213340",
-    "password" : "sayyid123"
+    "password" : "sayyid12345"
 }
 
 ### change password
-POST http://localhost:3000/auth/change-password
+PUT  http://localhost:3000/api/user/change-password/1
 Content-Type: application/json
 
 {
     "oldPassword": "sayyid123",
-    "newPassword": "sayyid1234"
+    "newPassword": "sayyid12345"
 }
 
 ### forgot password

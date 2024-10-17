@@ -3,7 +3,7 @@ const router = express.Router();
 
 const userController = require("../controller/userController");
 
-router.post("/change-password/:id", userController.changePasswordController);
+router.put("/change-password/:id", userController.changePasswordController);
 router.post(
   "/forgot-password",
   userController.sendResetPasswordEmailController

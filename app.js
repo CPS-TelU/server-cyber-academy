@@ -31,8 +31,10 @@ app.use(express.json());
 app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
+
 app.use("/api", moduleRoutes);
 app.use("/user", userAuthRoutes);
+
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(expressLayouts);
@@ -52,6 +54,10 @@ const io = new Server(server, {
 });
 io.on("connection", (socket) => {
   console.log("A user connected");
+
+  socket.on("newMessage", (message) => {
+    io.emit("messageBroadcast", message);
+
   socket.on("newQuestion", (questionData) => {
     io.emit("questionBroadcast", questionData);
   });

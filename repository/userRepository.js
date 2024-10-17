@@ -1,7 +1,7 @@
 const prisma = require("../config/db.js");
 
 const getUserById = async (id) => {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.users.findUnique({
     where: {
       id: id,
     },
@@ -10,7 +10,7 @@ const getUserById = async (id) => {
 };
 
 const updateUserById = async (id, user) => {
-  const updatedUser = await prisma.user.update({
+  const updatedUser = await prisma.users.update({
     where: {
       id: id,
     },
@@ -20,7 +20,7 @@ const updateUserById = async (id, user) => {
 };
 
 const getUserByemail = async (email) => {
-  const user = await prisma.user.findFirst({
+  const user = await prisma.users.findFirst({
     where: {
       email: email,
     },

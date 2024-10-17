@@ -1,0 +1,35 @@
+### register
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "name"  : "Sayyid",
+    "nim"   : "1101213340",
+    "className": "TT-45-09",
+    "email" : "sayyid@gmail.com",
+    "noHp": "085161735214",
+    "gender": "Male",
+    "faculty": "Electrical Engineering",
+    "year": 2021,
+    "major": "Telecommunication Engineering",
+    "password" : "sayyid123",
+    "document": "document_link_here",
+    "github": "https://github.com/sayyidz"
+}
+
+### change password
+POST http://localhost:3000/auth/change-password
+Content-Type: application/json
+
+{
+    "oldPassword": "sayyid123",
+    "newPassword": "sayyid1234"
+}
+
+### forgot password
+POST http://localhost:3000/user/forgot-password
+Content-Type: application/json
+
+{
+    "email": "sayyid@gmail.com"
+}

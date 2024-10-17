@@ -5,6 +5,8 @@ const topicRoutes = require("./routes/topicRoutes.js");
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
 const moduleRoutes = require("./routes/moduleRoutes.js");
+const authRoutes = require("./routes/userAuthRoutes.js");
+const userRoutes = require("./routes/userRoutes.js");
 const { Server } = require("socket.io");
 const app = express();
 require("dotenv").config();
@@ -26,6 +28,8 @@ app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
 app.use("/api", moduleRoutes);
+app.use("/auth", authRoutes);
+app.use("/user", userRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

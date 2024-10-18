@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const multer = require('multer');
+const storage = multer.memoryStorage(); // Gunakan memory storage untuk buffer
+const upload = multer({ storage });
 
 router.get('/admin', async (req, res) => {
     try {
@@ -143,6 +146,32 @@ router.get('/module/add', (req, res) => {
   });
 });
 
+// Route untuk halaman edit module
+router.get('/module/edit/:id', async (req, res) => {
+  const moduleId = parseInt(req.params.id);  // Mengambil ID dari URL
+
+  try {
+      // Mengambil data module dari database berdasarkan ID
+      const moduleData = await prisma.moduls.findUnique({
+          where: { id: moduleId }
+      });
+
+      if (!moduleData) {
+          return res.status(404).send('Module not found');
+      }
+
+      // Render halaman edit module dan kirim data module ke view
+      res.render('editModule', { 
+          title: 'Edit Module',
+          module: moduleData 
+      });
+  } catch (error) {
+      console.error('Error fetching module:', error);
+      res.status(500).send('Internal Server Error');
+  }
+});
+
+
 router.get('/submission/spectate', (req, res) => {
     res.render('spectateSubmission', {
         title: 'Spectate Submission'
@@ -154,5 +183,40 @@ router.get('/certificate/add', (req, res) => {
         title: 'Add Certificate'
     });
 });
+
+// Route untuk update module menggunakan PUT
+router.put('/cms/module/update/:id', upload.single('file'), async (req, res) => {
+  const moduleId = parseInt(req.params.id);
+  const { name, opened_at } = req.body;
+
+  // Validasi dan proses date
+  let openedAtDate = new Date(opened_at);
+  if (isNaN(openedAtDate)) {
+      return res.status(400).json({ message: 'Invalid date' });
+  }
+
+  const file = req.file ? `/uploads/${req.file.filename}` : undefined;
+
+  try {
+      // Update modul di database
+      const updatedModule = await prisma.module.update({
+          where: { id: moduleId },
+          data: {
+              name: name || undefined,
+              opened_at: openedAtDate,
+              file: file
+          }
+      });
+
+      // Kirim respons
+      res.status(200).json({ message: 'Module updated successfully' });
+  } catch (error) {
+      console.error('Error updating module:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
 
 module.exports = router

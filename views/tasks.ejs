@@ -29,8 +29,19 @@
             <td><%= task.id %></td>
             <td><%= task.title %></td>
             <td><%= task.module %></td>
-            <td><%= task.opened_at %></td>
-            <td><%= task.closed_at %></td>
+            <td><%= new Date(task.opened_at).toLocaleString('en-US', {
+              weekday: 'short', 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric'
+          }).replace(/,/g, '') %></td>
+  
+          <td><%= new Date(task.closed_at).toLocaleString('en-US', {
+            weekday: 'short', 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric'
+        }).replace(/,/g, '') %></td>
             <td><a href="/cms/tasks/edit" class="btn btn-primary">Edit</a></td>
           </tr>
         <% }) %>

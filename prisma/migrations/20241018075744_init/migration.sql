@@ -7,12 +7,12 @@ CREATE TABLE "users" (
     "noHp" TEXT NOT NULL,
     "gender" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "password" TEXT,
     "major" TEXT NOT NULL,
     "faculty" TEXT NOT NULL,
     "document" TEXT NOT NULL,
     "github" TEXT NOT NULL,
-    "year" INTEGER NOT NULL,
+    "year" TEXT NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -115,6 +115,12 @@ CREATE TABLE "tasks" (
 
     CONSTRAINT "tasks_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_nim_key" ON "users"("nim");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- AddForeignKey
 ALTER TABLE "moduls" ADD CONSTRAINT "moduls_admin_id_fkey" FOREIGN KEY ("admin_id") REFERENCES "admins"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

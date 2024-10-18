@@ -5,6 +5,7 @@ const {
   registerUser,
   getUserByNim,
   blacklistToken,
+  getUserByEmail,
 } = require("../repository/userAuthRepository");
 
 const registerUserService = async (
@@ -17,29 +18,30 @@ const registerUserService = async (
   faculty,
   year,
   major,
-  password,
   document,
   github
 ) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(email)) {
-    return {
-      status: false,
-      message: "Invalid email format.",
-    };
+    throw new Error("Format email tidak valid.");
   }
 
-  if (password.length < 6) {
-    return {
-      status: false,
-      message: "Password must be longer than 6 characters.",
-    };
+  const existingUserByNIM = await getUserByNim(nim);
+  if (existingUserByNIM) {
+    throw new Error("NIM sudah terdaftar.");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const existingUserByEmail = await getUserByEmail(email);
+  if (existingUserByEmail) {
+    throw new Error("Email sudah terdaftar.");
+  }
 
-  await registerUser(
+  const rawPassword = nim + "ca2024";
+
+  const hashedPassword = await bcrypt.hash(rawPassword, 10);
+
+  const user = await registerUser(
     name,
     nim,
     className,
@@ -53,30 +55,33 @@ const registerUserService = async (
     document,
     github
   );
-  return {
-    status: true,
-    message: "Account created",
-  };
+
+  return user;
 };
 
 const loginUserService = async (nim, password) => {
+  if (!nim || !password) {
+    throw new Error("NIM dan password harus diisi");
+  }
+
   const user = await getUserByNim(nim);
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error("User tidak ditemukan");
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    throw new Error("Invalid credentials");
+    throw new Error("Kredensial tidak valid");
   }
 
   const payload = { id: user.id, name: user.name };
+
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
 
   return {
     status: true,
-    message: "Login success",
+    message: "Login berhasil",
     payload,
     token,
   };

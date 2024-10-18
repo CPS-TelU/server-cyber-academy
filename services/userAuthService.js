@@ -5,6 +5,7 @@ const {
   registerUser,
   getUserByNim,
   blacklistToken,
+  getUserByEmail,
 } = require("../repository/userAuthRepository");
 
 const registerUserService = async (
@@ -22,12 +23,18 @@ const registerUserService = async (
 ) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Validasi format email
   if (!emailRegex.test(email)) {
-    return {
-      status: false,
-      message: "Format email tidak valid.",
-    };
+    throw new Error("Format email tidak valid.");
+  }
+
+  const existingUserByNIM = await getUserByNim(nim);
+  if (existingUserByNIM) {
+    throw new Error("NIM sudah terdaftar.");
+  }
+
+  const existingUserByEmail = await getUserByEmail(email);
+  if (existingUserByEmail) {
+    throw new Error("Email sudah terdaftar.");
   }
 
   const rawPassword = nim + "ca2024";
@@ -49,11 +56,7 @@ const registerUserService = async (
     github
   );
 
-  return {
-    status: true,
-    message: "Account created",
-    data: user,
-  };
+  return user;
 };
 
 const loginUserService = async (nim, password) => {

@@ -20,7 +20,7 @@ model User {
   major         String
   faculty       String
   document      String
-  github        String
+  github        String?
   year          String
   answer        Answer[]
   certification Certification[]

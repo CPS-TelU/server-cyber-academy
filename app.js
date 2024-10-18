@@ -59,7 +59,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/cms", adminCmsRoutes);
 
 // by Mitchel
-app.use("/api/moduls", modulRoutes);
+app.use("/api/moduls", moduleRoutes);
 app.use("/api/certificate", certificateRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/submissions", submissionRoutes);

@@ -2,8 +2,12 @@ let nodemailer = require("nodemailer");
 let { google } = require("googleapis");
 let ejs = require("ejs");
 
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN } =
-  process.env;
+const {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REFRESH_TOKEN,
+  SERVER_EMAIL,
+} = process.env;
 
 let oauth2Client = new google.auth.OAuth2(
   GOOGLE_CLIENT_ID,
@@ -35,7 +39,7 @@ module.exports = {
 
   getHTML: (fileName, data) => {
     return new Promise((resolve, reject) => {
-      const path = `${__dirname}/../views/templates/${fileName}`;
+      const path = `${__dirname}/../views/${fileName}`;
       ejs.renderFile(path, data, (err, data) => {
         if (err) {
           return reject(err);

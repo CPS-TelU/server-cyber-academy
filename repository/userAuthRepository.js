@@ -44,6 +44,14 @@ const getUserByNim = async (nim) => {
   return user;
 };
 
+const getUserByEmail = async (email) => {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  return user;
+};
+
 // Logout user (blacklist token)
 const blacklistToken = async (token) => {
   const result = await prisma.blacklistedToken.create({
@@ -56,4 +64,4 @@ const blacklistToken = async (token) => {
   return result;
 };
 
-module.exports = { registerUser, getUserByNim, blacklistToken };
+module.exports = { registerUser, getUserByNim, getUserByEmail, blacklistToken };

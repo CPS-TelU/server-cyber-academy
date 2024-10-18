@@ -4,9 +4,9 @@ Content-Type: application/json
 
 {
     "name"  : "Adam",
-    "nim"   : "1101213133",
+    "nim"   : "110121313311",
     "className": "TT-45-09",
-    "email" : "adam@gmail.com",
+    "email" : "adam1@gmail.com",
     "noHp": "081332938169",
     "gender": "Male",
     "faculty": "Electrical Engineering",

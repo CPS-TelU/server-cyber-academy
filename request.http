@@ -1,20 +1,20 @@
 ### register
-POST http://localhost:3000/api/auth/register
+POST https://be-cyber-academy.vercel.app/api/auth/register
 Content-Type: application/json
 
 {
-    "name"  : "Sayyid",
-    "nim"   : "1101213340",
+    "name"  : "Adam",
+    "nim"   : "1101213133",
     "className": "TT-45-09",
-    "email" : "sayyid@gmail.com",
-    "noHp": "085161735214",
+    "email" : "adam@gmail.com",
+    "noHp": "081332938169",
     "gender": "Male",
     "faculty": "Electrical Engineering",
     "year": 2021,
     "major": "Telecommunication Engineering",
-    "password" : "sayyid123",
+    "password" : "adam123",
     "document": "document_link_here",
-    "github": "https://github.com/sayyidz"
+    "github": "https://github.com/adamwisnup"
 }
 
 ### login
@@ -22,8 +22,8 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-    "nim" : "1101213340",
-    "password" : "sayyid12345"
+    "nim" : "1101213133",
+    "password" : "adam12345"
 }
 
 ### change password

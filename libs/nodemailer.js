@@ -2,12 +2,8 @@ let nodemailer = require("nodemailer");
 let { google } = require("googleapis");
 let ejs = require("ejs");
 
-const {
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
-  GOOGLE_REFRESH_TOKEN,
-  SERVER_EMAIL,
-} = process.env;
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN } =
+  process.env;
 
 let oauth2Client = new google.auth.OAuth2(
   GOOGLE_CLIENT_ID,

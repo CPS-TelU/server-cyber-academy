@@ -6,7 +6,7 @@ const {
 
 const registerUserController = async (req, res) => {
   try {
-    const register = await registerUserService(
+    const user = await registerUserService(
       req.body.name,
       req.body.nim,
       req.body.className,
@@ -20,19 +20,19 @@ const registerUserController = async (req, res) => {
       req.body.github
     );
 
-    if (register.status) {
-      const { password, ...userWithoutPassword } = register.data;
+    const { password, ...userWithoutPassword } = user;
 
-      return res.status(201).json({
-        status: register.status,
-        message: register.message,
-        data: userWithoutPassword,
-      });
-    } else {
-      return res.status(400).json({ message: register.message });
-    }
+    return res.status(201).json({
+      status: true,
+      message: "Account created",
+      data: userWithoutPassword,
+    });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(400).json({
+      status: false,
+      message: error.message,
+      data: null,
+    });
   }
 };
 

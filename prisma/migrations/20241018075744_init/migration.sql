@@ -7,12 +7,12 @@ CREATE TABLE "users" (
     "noHp" TEXT NOT NULL,
     "gender" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "password" TEXT,
     "major" TEXT NOT NULL,
     "faculty" TEXT NOT NULL,
     "document" TEXT NOT NULL,
     "github" TEXT NOT NULL,
-    "year" INTEGER NOT NULL,
+    "year" TEXT NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -56,7 +56,6 @@ CREATE TABLE "submisions" (
 CREATE TABLE "certifications" (
     "id" SERIAL NOT NULL,
     "image" TEXT NOT NULL,
-    "name" TEXT,
     "user_id" INTEGER NOT NULL,
     "admin_id" INTEGER,
     "grade" SMALLINT,
@@ -102,7 +101,7 @@ CREATE TABLE "answers" (
 CREATE TABLE "groups" (
     "id" SERIAL NOT NULL,
     "groupName" TEXT NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "user_id" INTEGER NOT NULL,
 
     CONSTRAINT "groups_pkey" PRIMARY KEY ("id")
 );
@@ -112,10 +111,16 @@ CREATE TABLE "tasks" (
     "id" SERIAL NOT NULL,
     "taskName" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "groupId" INTEGER NOT NULL,
+    "group_id" INTEGER NOT NULL,
 
     CONSTRAINT "tasks_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_nim_key" ON "users"("nim");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- AddForeignKey
 ALTER TABLE "moduls" ADD CONSTRAINT "moduls_admin_id_fkey" FOREIGN KEY ("admin_id") REFERENCES "admins"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -157,7 +162,7 @@ ALTER TABLE "answers" ADD CONSTRAINT "answers_question_id_fkey" FOREIGN KEY ("qu
 ALTER TABLE "answers" ADD CONSTRAINT "answers_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "groups" ADD CONSTRAINT "groups_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "groups" ADD CONSTRAINT "groups_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tasks" ADD CONSTRAINT "tasks_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tasks" ADD CONSTRAINT "tasks_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

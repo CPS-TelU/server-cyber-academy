@@ -11,25 +11,24 @@ datasource db {
 model User {
   id            Int             @id @default(autoincrement())
   name          String
-  nim           String
+  nim           String          @unique
   className     String
   noHp          String
   gender        String
-  email         String          
-  password      String
+  email         String          @unique
+  password      String?
   major         String
   faculty       String
   document      String
-  github        String
-  year          Int
-  group_id      Int?
+  github        String?
+  year          String
   answer        Answer[]
   certification Certification[]
   modul         Modul[]
   questions     Question[]
   submission    Submission[]
   topics        Topic[]
-  group         Group?          @relation(fields: [group_id], references: [id])
+  groups        Group[]
 
   @@map("users")
 }
@@ -41,7 +40,7 @@ model Admin {
   name          String
   certification Certification[]
   modul         Modul[]
-  submission    Submission[]
+  submission    Submission[] // Use plural for consistency
 
   @@map("admins")
 }
@@ -60,20 +59,17 @@ model Modul {
 }
 
 model Submission {
-  id         Int       @id @default(autoincrement())
-  file       String
-  submitted  Boolean   @default(false)
-  group_id   Int
-  task_id    Int
-  user_id    Int
-  admin_id   Int?
-  created_at DateTime? @db.Timestamp(6)
-  status     String?
-  grade      Int?      @db.SmallInt
-  admin      Admin?    @relation(fields: [admin_id], references: [id], onDelete: Restrict)
-  group      Group     @relation(fields: [group_id], references: [id])
-  task       Task      @relation(fields: [task_id], references: [id])
-  user       User      @relation(fields: [user_id], references: [id])
+  id        Int     @id @default(autoincrement())
+  file      String
+  submitted Boolean @default(false)
+  group_id  Int
+  task_id   Int
+  user_id   Int
+  admin_id  Int
+  group     Group   @relation(fields: [group_id], references: [id])
+  task      Task    @relation(fields: [task_id], references: [id])
+  user      User    @relation(fields: [user_id], references: [id])
+  admin     Admin   @relation(fields: [admin_id], references: [id])
 
   @@map("submisions")
 }
@@ -94,9 +90,9 @@ model Certification {
 model Topic {
   id        String     @id @default(uuid())
   title     String
-  userId    Int
+  user_id   Int
   questions Question[]
-  User      User       @relation(fields: [userId], references: [id])
+  User      User       @relation(fields: [user_id], references: [id])
 
   @@map("topics")
 }
@@ -106,8 +102,8 @@ model Question {
   messages  String
   image     String?
   createdAt DateTime @default(now())
-  user_id    Int
-  topic_id   String
+  user_id   Int
+  topic_id  String
   answers   Answer[]
   Topic     Topic    @relation(fields: [topic_id], references: [id])
   User      User     @relation(fields: [user_id], references: [id])
@@ -116,14 +112,14 @@ model Question {
 }
 
 model Answer {
-  id         String   @id @default(uuid())
-  messages   String
-  image      String?
-  createdAt  DateTime @default(now())
-  userId     Int
-  questionId String
-  Questions  Question @relation(fields: [questionId], references: [id])
-  User       User     @relation(fields: [userId], references: [id])
+  id          String   @id @default(uuid())
+  messages    String
+  image       String?
+  createdAt   DateTime @default(now())
+  user_id     Int
+  question_id String
+  Questions   Question @relation(fields: [question_id], references: [id])
+  User        User     @relation(fields: [user_id], references: [id])
 
   @@map("answers")
 }
@@ -132,19 +128,19 @@ model Group {
   id          Int          @id @default(autoincrement())
   groupName   String
   user_id     Int
-  tasks       Task[]       // One-to-many relationship with Task
-  submissions Submission[] // One-to-many relationship with Submission
-  users       User[]       // One-to-many relationship with User
+  User        User         @relation(fields: [user_id], references: [id])
+  tasks       Task[] // One-to-many relationship with Task
+  submissions Submission[] // Add this field to link Group to Submission
 
   @@map("groups")
 }
 
 model Task {
-  id          Int      @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   taskName    String
   description String
-  group_id    Int      // Foreign key to Group
-  group       Group    @relation(fields: [group_id], references: [id]) // Define the relation to Group
+  group_id    Int // Foreign key to Group
+  group       Group        @relation(fields: [group_id], references: [id]) // Define the relation to Group
   submissions Submission[] // One-to-many relationship with Submission
 
   @@map("tasks")

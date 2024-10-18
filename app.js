@@ -19,7 +19,7 @@ const submissionRoutes = require("./routes/submissionRoutes");
 
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
-const moduleRoutes = require("./routes/moduleRoutes.js");
+const moduleRoutes = require("./routes/modulRoutes.js");
 const userAuthRoutes = require("./routes/userAuthRoutes.js");
 const adminCmsRoutes = require("./routes/adminCmsRoutes");
 const adminRoutes = require("./routes/adminroutes.js");

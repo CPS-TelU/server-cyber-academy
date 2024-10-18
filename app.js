@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const cors = require("cors");
 const http = require("http");
 const path = require("path");
@@ -6,6 +6,18 @@ const expressLayouts = require("express-ejs-layouts");
 const { Server } = require("socket.io");
 
 const topicRoutes = require("./routes/topicRoutes.js");
+// const questionRoutes = require("./routes/questionRoutes.js");
+// const answerRoutes = require("./routes/answerRoutes.js");
+const userAuthRoutes = require('./routes/userAuthRoutes');
+const adminCmsRoutes = require('./routes/adminCmsRoutes');
+const adminRoutes = require('./routes/adminroutes.js');
+
+const modulRoutes = require('./routes/modulRoutes');
+const certificateRoutes = require('./routes/certificateRoutes');
+const groupRoutes = require('./routes/groupRoutes.js');
+const submissionRoutes = require('./routes/submissionRoutes');
+
+const { Server } = require("socket.io");
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
 const moduleRoutes = require("./routes/moduleRoutes.js");
@@ -24,6 +36,32 @@ let corsOptions = {
   credentials: true,
 };
 
+app.set('view engine', 'ejs');
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(expressLayouts);
+app.set('layout', 'layout');
+
+app.use((req, res, next) => {
+  req.io = io;  // Attach io to the request object
+  next();
+});
+
+app.get('/', (req, res) => {
+  res.send('CPS API!');
+});
+
+app.use("/api/auth", userAuthRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/cms", adminCmsRoutes);
+
+// by Mitchel
+app.use('/api/moduls', modulRoutes);
+app.use('/api/certificate', certificateRoutes);
+app.use('/api/groups', groupRoutes);
+app.use('/api/submissions', submissionRoutes);
+
+// Server setup for Socket.io
 // Middleware
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
@@ -78,5 +116,5 @@ io.on("connection", (socket) => {
   });
 });
 
-// Export the app and server
-module.exports = { app, server };
+// Export app and server correctly
+module.exports = app, server;

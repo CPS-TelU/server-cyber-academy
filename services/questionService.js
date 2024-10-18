@@ -24,7 +24,7 @@ const createQuestion = async (messages, file, user_id, topic_id) => {
     throw new Error("Failed to create question");
   }
 };
-const updatedQuestion = async (id, message, files) => {
+const updatedQuestion = async (id, messages, files) => {
   try {
     const existingQuestion = await questionRepository.getQuestionById(id);
     if (!existingQuestion) {
@@ -40,7 +40,7 @@ const updatedQuestion = async (id, message, files) => {
       imageUrl = imageUpload.url;
     }
     const questionData = {
-      messages: message,
+      messages: messages,
       image: imageUrl,
     };
     return await questionRepository.updateQuestion(id, questionData);

@@ -1,37 +1,58 @@
+// certificateController.js
 const certificateService = require('../services/certificateService');
 
-const postCertificate = (req, res) => {
-    const { name, certificate } = req.body;
-
+const getAllCertificates = async (req, res) => {
     try {
-        const newCertificate = certificateService.addCertificate(name, certificate);
-        return res.status(201).json({
-            message: "Certificate added successfully",
-            certificate: newCertificate,
-        });
+        const certificates = await certificateService.getAllCertificates();
+        res.json(certificates);
     } catch (error) {
-        return res.status(400).json({
-            message: error.message,
-        });
+        res.status(500).json({ error: error.message });
     }
 };
 
-const getCertificates = (req, res) => {
-    const { name } = req.body; // Name is now passed via JSON body
-
+const getCertificateById = async (req, res) => {
     try {
-        const certificatesByName = certificateService.getCertificatesByName(name);
-        return res.status(200).json({
-            certificates: certificatesByName,
-        });
+        const certificate = await certificateService.getCertificateById(req.params.id);
+        if (!certificate) {
+            return res.status(404).json({ message: 'Certificate not found' });
+        }
+        res.json(certificate);
     } catch (error) {
-        return res.status(400).json({
-            message: error.message,
-        });
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const createCertificate = async (req, res) => {
+    try {
+        const certificate = await certificateService.createCertificate(req.body);
+        res.status(201).json({ message: 'Certificate created successfully', certificate });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const updateCertificate = async (req, res) => {
+    try {
+        const certificate = await certificateService.updateCertificate(req.params.id, req.body);
+        res.json({ message: 'Certificate updated successfully', certificate });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const deleteCertificate = async (req, res) => {
+    try {
+        await certificateService.deleteCertificate(req.params.id);
+        res.status(200).json({ message: 'Certificate deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 };
 
 module.exports = {
-    postCertificate,
-    getCertificates,
+    getAllCertificates,
+    getCertificateById,
+    createCertificate,
+    updateCertificate,
+    deleteCertificate
 };

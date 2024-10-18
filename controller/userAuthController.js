@@ -1,3 +1,4 @@
+const nodemailer = require("../libs/nodemailer");
 const {
   registerUserService,
   loginUserService,
@@ -20,11 +21,30 @@ const registerUserController = async (req, res) => {
       req.body.github
     );
 
+    const registrationSendEmail = async () => {
+      try {
+        const html = await nodemailer.getHTML("registration.ejs", {
+          name: req.body.name,
+        });
+
+        await nodemailer.sendMail(req.body.email, "Registration", html);
+        return true;
+      } catch (err) {
+        console.error("Failed to send registration email:", err.message);
+        return false;
+      }
+    };
+
+    const emailSent = await registrationSendEmail();
+    if (!emailSent) {
+      throw new Error("Failed to send email");
+    }
+
     const { password, ...userWithoutPassword } = user;
 
     return res.status(201).json({
       status: true,
-      message: "Account created",
+      message: `Account created, and email sent to ${req.body.email}`,
       data: userWithoutPassword,
     });
   } catch (error) {

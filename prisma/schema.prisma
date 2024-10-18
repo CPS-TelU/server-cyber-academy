@@ -62,14 +62,14 @@ model Submission {
   id        Int     @id @default(autoincrement())
   file      String
   submitted Boolean @default(false)
-  group_id  Int // Foreign key to Group model
-  task_id   Int // Foreign key to Task model
-  user_id   Int // Foreign key to User model
-  admin_id  Int // Foreign key to Admin model
-  group     Group   @relation(fields: [group_id], references: [id]) // Define relation to Group
-  task      Task    @relation(fields: [task_id], references: [id]) // Define relation to Task
-  user      User    @relation(fields: [user_id], references: [id]) // Define relation to User
-  admin     Admin   @relation(fields: [admin_id], references: [id]) // Define relation to Admin
+  group_id  Int
+  task_id   Int
+  user_id   Int
+  admin_id  Int
+  group     Group   @relation(fields: [group_id], references: [id])
+  task      Task    @relation(fields: [task_id], references: [id])
+  user      User    @relation(fields: [user_id], references: [id])
+  admin     Admin   @relation(fields: [admin_id], references: [id])
 
   @@map("submisions")
 }

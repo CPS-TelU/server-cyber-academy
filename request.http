@@ -1,5 +1,5 @@
 ### register
-POST https://be-cyber-academy.vercel.app/api/auth/register
+POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 
 {
@@ -10,7 +10,7 @@ Content-Type: application/json
     "noHp": "081332938169",
     "gender": "Male",
     "faculty": "Electrical Engineering",
-    "year": 2021,
+    "year": "2021",
     "major": "Telecommunication Engineering",
     "password" : "adam123",
     "document": "document_link_here",
@@ -23,7 +23,7 @@ Content-Type: application/json
 
 {
     "nim" : "1101213133",
-    "password" : "adam12345"
+    "password" : "1101213133ca2024"
 }
 
 ### change password

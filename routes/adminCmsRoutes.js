@@ -185,7 +185,7 @@ router.get('/certificate/add', (req, res) => {
 });
 
 // Route untuk update module menggunakan PUT
-router.put('/cms/module/update/:id', upload.single('file'), async (req, res) => {
+router.put('/module/update/:id', upload.single('file'), async (req, res) => {
   const moduleId = parseInt(req.params.id);
   const { name, opened_at } = req.body;
 
@@ -212,6 +212,23 @@ router.put('/cms/module/update/:id', upload.single('file'), async (req, res) => 
       res.status(200).json({ message: 'Module updated successfully' });
   } catch (error) {
       console.error('Error updating module:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Route untuk menangani DELETE
+router.delete('/certificate/delete/:id', async (req, res) => {
+  const moduleId = parseInt(req.params.id);
+
+  try {
+      // Hapus data module dari database
+      await prisma.certifications.delete({
+          where: { id: moduleId }
+      });
+
+      res.status(200).json({ message: 'Module deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting module:', error);
       res.status(500).json({ message: 'Server error' });
   }
 });

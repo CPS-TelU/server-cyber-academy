@@ -76,4 +76,10 @@ const getAdminByUsername = async (username) => {
     return admin;
 }
 
-module.exports = { uploadCertificate, registerAdmin, uploadTask, uploadModule, getAdminByUsername }
+module.exports = { 
+    uploadCertificate, 
+    registerAdmin, 
+    uploadTask, 
+    uploadModule, 
+    getAdminByUsername,
+}

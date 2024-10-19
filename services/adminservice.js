@@ -7,6 +7,9 @@ const {
   uploadModule,
   getAdminByUsername
 } = require("../repository/adminRepository");
+const userRepository = require("../repository/userRepository")
+const taskRepository = require("../repository/taskRepository")
+const submissionRepository = require("../repository/submissionRepository")
 
 
 const handleFileUpload = async (name, file, opened_at) => {
@@ -100,10 +103,39 @@ const loginAdminService = async (username, password) => {
     };
 };
 
+const getDashboardData = async () => {
+  // Ambil data user, task, dan submission melalui repository
+  const users = await userRepository.findAllUsers();
+  const tasks = await taskRepository.findAllTasks();
+  const submissions = await submissionRepository.findAllSubmissions();
+
+  // Hitung jumlah peserta, tugas, dan submission
+  const participantsCount = users.length;
+  const tasksCount = tasks.length;
+  const submissionsCount = submissions.length;
+
+  // Buat array participantList dari data user
+  const participantList = users.map(user => ({
+    id: user.id,
+    nama: user.name,
+    nim: user.nim,
+    className: user.className,
+    git: user.github, // Link GitHub dinamis
+  }));
+
+  return {
+    participantsCount,
+    tasksCount,
+    submissionsCount,
+    participantList,
+  };
+};
+
 module.exports = {
   loginAdminService,
   handleFileUpload,
   handleSertifUpload,
   handleTaskUpload,
   registerAdminService,
+  getDashboardData,
 };

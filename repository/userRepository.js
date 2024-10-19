@@ -28,8 +28,17 @@ const getUserByemail = async (email) => {
   return user;
 };
 
+const findAllUsers = async () => {
+  return await prisma.user.findMany({
+    include: {
+      groups: true, // Memuat relasi groups
+    },
+  });
+};
+
 module.exports = {
   getUserById,
   updateUserById,
   getUserByemail,
+  findAllUsers,
 };

@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const { handleFileUpload, handleSertifUpload, handleTaskUpload, registerAdminService, loginAdminService } = require('../services/adminservice');
+const { handleFileUpload, handleSertifUpload, handleTaskUpload, registerAdminService, loginAdminService, getDashboardData } = require('../services/adminservice');
 
 const uploadFile = async (req, res) => {
     try {
@@ -27,7 +27,7 @@ const uploadSerti = async (req, res) => {
         console.log('User ID:', user_id);  // Log untuk melihat user_id
         console.log('Grade:', gradeInt);   // Log untuk melihat grade
 
-        const user = await prisma.users.findUnique({
+        const user = await prisma.user.findUnique({
             where: {
                 id: user_id,
             },
@@ -91,6 +91,26 @@ const loginAdminController = async (req, res) => {
     }
 }
 
+const getAdminDashboard = async (req, res) => {
+    try {
+      // Dapatkan data dashboard dari service
+      const { participantsCount, tasksCount, submissionsCount, participantList } = await getDashboardData();
+  
+      // Render ke halaman admin.ejs
+      res.render('admin', {
+        title: 'Admin Dashboard',
+        participants: participantsCount,
+        ongoingTasks: tasksCount,
+        submittedTasks: submissionsCount,
+        newMessages: 5, // Placeholder statis
+        participantList, // Daftar peserta
+      });
+    } catch (error) {
+      console.error('Error fetching participants:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+
 module.exports = {
-    uploadFile, uploadSerti, uploadTask, registerAdminController, loginAdminController
+    uploadFile, uploadSerti, uploadTask, registerAdminController, loginAdminController, getAdminDashboard
 };

@@ -5,84 +5,20 @@ const prisma = new PrismaClient();
 const multer = require('multer');
 const storage = multer.memoryStorage(); // Gunakan memory storage untuk buffer
 const upload = multer({ storage });
+const adminController = require('../controller/admincontroller');
+const taskController = require('../controller/taskController');
 
-router.get('/admin', async (req, res) => {
-    try {
-        // Ambil semua data peserta dari tabel user
-        const users = await prisma.user.findMany({
-          include: {
-              groups: true, // Ini akan memuat relasi groups untuk setiap user
-          },
-      });
-        const tasks = await prisma.task.findMany();
-        const submissions = await prisma.submission.findMany();
-
-        // Hitung jumlah total peserta
-        const participantsCount = users.length;
-        const tasksCount = tasks.length;
-        const submissionsCount = submissions.length;
-
-        // Render data ke halaman admin
-        res.render('admin', {
-            title: 'Admin Dashboard',
-            participants: participantsCount, // Jumlah peserta
-            ongoingTasks: tasksCount,                // Data statis sebagai placeholder
-            submittedTasks: submissionsCount,               // Data statis sebagai placeholder
-            newMessages: 5,                  // Data statis sebagai placeholder
-            participantList: users.map(user => ({
-                id: user.id,
-                nama: user.name,
-                nim: user.nim,
-                className: user.className,
-                git: user.github // Contoh link GitHub dinamis
-            }))
-        });
-    } catch (error) {
-        console.error('Error fetching participants:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-  router.get('/tasks', async (req, res) => {
-    try {
-      // Mengambil data sertifikat dari database menggunakan Prisma
-      const tasks = await prisma.task.findMany();
-  
-      // Mengirimkan data sertifikat ke view EJS
-      res.render('tasks', { 
-        taskList: tasks,
-        title: 'Task Upload' 
-      });
-    } catch (error) {
-      console.error('Error fetching certificates:', error);
-      res.status(500).send('Server Error');
-    }
-});
-
-  router.get('/module', async (req, res) => {
-    try {
-      // Mengambil data sertifikat dari database menggunakan Prisma
-      const moduls = await prisma.modul.findMany();
-  
-      // Mengirimkan data sertifikat ke view EJS
-      res.render('module', { 
-        moduleList: moduls,
-        title: 'Module Upload' 
-      });
-    } catch (error) {
-      console.error('Error fetching certificates:', error);
-      res.status(500).send('Server Error');
-    }
-});
+router.get('/admin', adminController.getAdminDashboard);
+router.get('/tasks', taskController.getTaskPage);
 
 router.get('/submission', async (req, res) => {
   try {
     // Mengambil data sertifikat dari database menggunakan Prisma
     const submissions = await prisma.submission.findMany({
       include: {
-          users: true,  // Pastikan `users` di-include
-          groups: true, // Jika ada relasi dengan groups
-          tasks: true   // Jika ada relasi dengan tasks
+          user: true,  // Pastikan `users` di-include
+          group: true, // Jika ada relasi dengan groups
+          task: true   // Jika ada relasi dengan tasks
       }
   });
 
@@ -102,7 +38,7 @@ router.get('/submission', async (req, res) => {
       // Mengambil data sertifikat dari database menggunakan Prisma
       const certificates = await prisma.certification.findMany({
         include: {
-          users: true // Misalnya jika Anda ingin mengambil relasi dengan tabel user
+          user: true // Misalnya jika Anda ingin mengambil relasi dengan tabel user
         }
       });
   

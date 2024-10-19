@@ -16,20 +16,19 @@ model User {
   noHp          String
   gender        String
   email         String          @unique
-  password      String
+  password      String?
   major         String
   faculty       String
   document      String
-  github        String
-  year          Int
-  group_id      Int?
-  answers       Answer[]
+  github        String?
+  year          String
+  answer        Answer[]
   certification Certification[]
   modul         Modul[]
   questions     Question[]
   submission    Submission[]
   topics        Topic[]
-  groups        Group?          @relation(fields: [group_id], references: [id])
+  groups        Group[]
 
   @@map("users")
 }
@@ -41,41 +40,36 @@ model Admin {
   name          String
   certification Certification[]
   modul         Modul[]
-  submission    Submission[]
+  submission    Submission[] // Use plural for consistency
 
   @@map("admins")
 }
 
 model Modul {
-  id        Int       @id @default(autoincrement())
-  name      String
-  file      String
-  user_id   Int?
-  admin_id  Int?
-  status    Boolean?
-  opened_at DateTime? @db.Timestamp(6)
-  closed_at DateTime? @db.Timestamp(6)
-  admin     Admin?    @relation(fields: [admin_id], references: [id], onDelete: Restrict)
-  user      User?     @relation(fields: [user_id], references: [id], onDelete: Restrict)
+  id       Int     @id @default(autoincrement())
+  name     String
+  link     String
+  user_id  Int
+  admin_id Int
+  status   Boolean
+  admin    Admin   @relation(fields: [admin_id], references: [id])
+  user     User    @relation(fields: [user_id], references: [id])
 
   @@map("moduls")
 }
 
 model Submission {
-  id         Int       @id @default(autoincrement())
-  file       String
-  submitted  Boolean?  @default(false)
-  group_id   Int?
-  task_id    Int?
-  user_id    Int?
-  admin_id   Int?
-  created_at DateTime? @db.Timestamp(6)
-  status     String?
-  grade      Int?      @db.SmallInt
-  admin      Admin?    @relation(fields: [admin_id], references: [id], onDelete: Restrict)
-  group      Group?    @relation(fields: [group_id], references: [id], onDelete: Restrict)
-  task       Task?     @relation(fields: [task_id], references: [id], onDelete: Restrict)
-  user       User?     @relation(fields: [user_id], references: [id], onDelete: Restrict)
+  id        Int     @id @default(autoincrement())
+  file      String
+  submitted Boolean @default(false)
+  group_id  Int
+  task_id   Int
+  user_id   Int
+  admin_id  Int
+  group     Group   @relation(fields: [group_id], references: [id])
+  task      Task    @relation(fields: [task_id], references: [id])
+  user      User    @relation(fields: [user_id], references: [id])
+  admin     Admin   @relation(fields: [admin_id], references: [id])
 
   @@map("submisions")
 }
@@ -96,9 +90,9 @@ model Certification {
 model Topic {
   id        String     @id @default(uuid())
   title     String
-  userId    Int
+  user_id   Int
   questions Question[]
-  users     User       @relation(fields: [userId], references: [id])
+  User      User       @relation(fields: [user_id], references: [id])
 
   @@map("topics")
 }
@@ -108,24 +102,24 @@ model Question {
   messages  String
   image     String?
   createdAt DateTime @default(now())
-  userId    Int
-  topicId   String
+  user_id   Int
+  topic_id  String
   answers   Answer[]
-  topics    Topic    @relation(fields: [topicId], references: [id])
-  users     User     @relation(fields: [userId], references: [id])
+  Topic     Topic    @relation(fields: [topic_id], references: [id])
+  User      User     @relation(fields: [user_id], references: [id])
 
   @@map("questions")
 }
 
 model Answer {
-  id         String   @id @default(uuid())
-  messages   String
-  image      String?
-  createdAt  DateTime @default(now())
-  userId     Int
-  questionId String
-  questions  Question @relation(fields: [questionId], references: [id])
-  users      User     @relation(fields: [userId], references: [id])
+  id          String   @id @default(uuid())
+  messages    String
+  image       String?
+  createdAt   DateTime @default(now())
+  user_id     Int
+  question_id String
+  Questions   Question @relation(fields: [question_id], references: [id])
+  User        User     @relation(fields: [user_id], references: [id])
 
   @@map("answers")
 }
@@ -133,24 +127,21 @@ model Answer {
 model Group {
   id          Int          @id @default(autoincrement())
   groupName   String
-  submissions Submission[]
-  tasks       Task[]
-  users       User[]
+  user_id     Int
+  User        User         @relation(fields: [user_id], references: [id])
+  tasks       Task[] // One-to-many relationship with Task
+  submissions Submission[] // Add this field to link Group to Submission
 
   @@map("groups")
 }
 
 model Task {
   id          Int          @id @default(autoincrement())
-  opened_at   DateTime     @db.Timestamp(6)
-  title       String
-  groupId     Int?
-  closed_at   DateTime?    @db.Timestamp(6)
-  module      String?      @db.VarChar
-  description String?
-  file        String?
-  submissions Submission[]
-  groups      Group?       @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  taskName    String
+  description String
+  group_id    Int // Foreign key to Group
+  group       Group        @relation(fields: [group_id], references: [id]) // Define the relation to Group
+  submissions Submission[] // One-to-many relationship with Submission
 
   @@map("tasks")
 }

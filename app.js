@@ -33,7 +33,9 @@ let corsOptions = {
   origin: [
     "http://localhost:3000",
     "https://www.cpslaboratory.com",
-    "http://localhost:3001",
+    "https://be-cyber-academy.vercel.app",
+    "https://be-cyber-academy-git-main-adamwisnups-projects.vercel.app",
+    "https://be-cyber-academy-7wkpnj4ck-adamwisnups-projects.vercel.app",
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,

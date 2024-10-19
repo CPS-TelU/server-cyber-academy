@@ -1,0 +1,54 @@
+<form id="editModuleForm">
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="<%= module.name %>">
+    </div>
+
+    <div class="mb-3">
+        <label for="opened_at" class="form-label">Opened At</label>
+        <input type="date" class="form-control" id="opened_at" name="opened_at" value="<%= module.opened_at.toISOString().split('T')[0] %>">
+    </div>
+
+    <!-- <div class="form-group">
+        <label for="opened_at">Opened At</label>
+        <input type="text" class="form-control" id="opened_at" name="opened_at" value="<%= module.opened_at.toISOString().split('T')[0] %>">
+    </div> -->
+
+    <div class="form-group">
+        <label for="file">Task File</label>
+        <input type="file" class="form-control" id="file" name="file">
+        <% if (module.file) { %>
+            <p>Current file: <a href="<%= module.file %>"><%= module.file %></a></p>
+        <% } %>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+<script>
+document.getElementById('editModuleForm').addEventListener('submit', async (event) => {
+    event.preventDefault(); // Mencegah pengiriman form default
+    console.log('Submit button clicked');
+
+    const formData = new FormData(event.target);
+    const moduleId = '<%= module.id %>'; // Ambil ID module dari server-side rendering
+    console.log('Form data created');
+
+    try {
+        const response = await fetch(`/cms/module/update/${moduleId}`, {
+            method: 'PUT',
+            body: formData,
+        });
+
+        if (response.ok) {
+            // Redirect ke halaman module setelah update berhasil
+            console.log('Module updated successfully');
+            window.location.href = '/cms/module';
+        } else {
+            console.error('Error updating module:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+</script>

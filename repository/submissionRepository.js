@@ -45,6 +45,10 @@ class SubmissionRepository {
             }
         });
     }
+
+    async findAllSubmissions() {
+        return await prisma.submission.findMany();
+      };
 }
 
 module.exports = new SubmissionRepository();

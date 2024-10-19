@@ -62,9 +62,19 @@ const resetPassword = async (email, token, newPassword) => {
   return updatedUser;
 };
 
+const whoamiService = async (id) => {
+  const user = await userRepository.getUserById(id);
+  if (!user) {
+    throw new Error("User tidak ditemukan");
+  }
+
+  return user
+}
+
 module.exports = {
   changePassword,
   sendResetPasswordEmail,
   forgotPassword,
   resetPassword,
+  whoamiService
 };

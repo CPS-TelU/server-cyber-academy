@@ -1,10 +1,16 @@
 const imagekit = require("../libs/imageKit");
+const jwt = require('jsonwebtoken');
 const {
   uploadCertificate,
   registerAdmin,
   uploadTask,
   uploadModule,
+  getAdminByUsername
 } = require("../repository/adminRepository");
+const userRepository = require("../repository/userRepository")
+const taskRepository = require("../repository/taskRepository")
+const submissionRepository = require("../repository/submissionRepository")
+
 
 const handleFileUpload = async (name, file, opened_at) => {
   const uploadResponse = await imagekit.upload({
@@ -75,9 +81,61 @@ const registerAdminService = async (username, password, name) => {
   };
 };
 
+const loginAdminService = async (username, password) => {
+  const admin = await getAdminByUsername(username);
+
+  if (!admin) {
+      throw new Error('User not found');
+  }
+
+  if (password !== admin.password) {
+    throw new Error('Invalid credentials');
+  }
+
+  const payload = { id: admin.id, username: admin.username };
+  const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+  return {
+      status: true,
+      message: 'Login success',
+      payload,
+      token,
+    };
+};
+
+const getDashboardData = async () => {
+  // Ambil data user, task, dan submission melalui repository
+  const users = await userRepository.findAllUsers();
+  const tasks = await taskRepository.findAllTasks();
+  const submissions = await submissionRepository.findAllSubmissions();
+
+  // Hitung jumlah peserta, tugas, dan submission
+  const participantsCount = users.length;
+  const tasksCount = tasks.length;
+  const submissionsCount = submissions.length;
+
+  // Buat array participantList dari data user
+  const participantList = users.map(user => ({
+    id: user.id,
+    nama: user.name,
+    nim: user.nim,
+    className: user.className,
+    git: user.github, // Link GitHub dinamis
+  }));
+
+  return {
+    participantsCount,
+    tasksCount,
+    submissionsCount,
+    participantList,
+  };
+};
+
 module.exports = {
+  loginAdminService,
   handleFileUpload,
   handleSertifUpload,
   handleTaskUpload,
   registerAdminService,
+  getDashboardData,
 };

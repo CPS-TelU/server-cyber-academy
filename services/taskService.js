@@ -1,3 +1,5 @@
+const taskRepository = require('../repository/taskRepository');
+
 let tasks = [];
 
 const addTask = (title, description) => {
@@ -31,8 +33,14 @@ const getTaskById = (id) => {
     return task;
 };
 
+const getTaskList = async () => {
+    const tasks = await taskRepository.findAllTasks();
+    return tasks;
+  };
+
 module.exports = {
     addTask,
     getAllTasks,
     getTaskById,
+    getTaskList
 };

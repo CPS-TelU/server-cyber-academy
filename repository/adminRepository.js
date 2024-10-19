@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const uploadCertificate = async (grade, status, imageUrl, user_id) => {
-    const result = await prisma.certifications.create({
+    const result = await prisma.certification.create({
         data: {
             grade,
             status,
@@ -19,7 +19,7 @@ const uploadCertificate = async (grade, status, imageUrl, user_id) => {
 };
 
 const uploadTask = async (title, module, opened_at, closed_at, description, fileUrl) => {
-    const result = await prisma.tasks.create({
+    const result = await prisma.task.create({
         data: {
             title,
             module,
@@ -39,10 +39,10 @@ const uploadTask = async (title, module, opened_at, closed_at, description, file
 };
 
 const uploadModule = async (name, fileUrl, opened_at) => {
-    const result = await prisma.moduls.create({
+    const result = await prisma.modul.create({
         data: {
             name,
-            file: fileUrl,
+            link: fileUrl,
             opened_at: new Date(opened_at).toISOString(),
             // user: {
             //     connect: {
@@ -56,7 +56,7 @@ const uploadModule = async (name, fileUrl, opened_at) => {
 };
 
 const registerAdmin = async (username, password, name) => {
-    const result = await prisma.admins.create({
+    const result = await prisma.admin.create({
         data: {
             username,
             password,
@@ -67,5 +67,19 @@ const registerAdmin = async (username, password, name) => {
     return result;
 };
 
+// Get user by Username (for login)
+const getAdminByUsername = async (username) => {
+    const admin = await prisma.admin.findFirst({
+        where: { username },
+    });
 
-module.exports = { uploadCertificate, registerAdmin, uploadTask, uploadModule }
+    return admin;
+}
+
+module.exports = { 
+    uploadCertificate, 
+    registerAdmin, 
+    uploadTask, 
+    uploadModule, 
+    getAdminByUsername,
+}

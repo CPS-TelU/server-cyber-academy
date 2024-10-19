@@ -63,8 +63,28 @@ const resetPasswordController = async (req, res) => {
   }
 };
 
+const whoamiController = async (req, res) => {
+  try {
+    const user = await userService.whoamiService(req.user.id);
+
+    res.status(200).json({
+      status: true,
+      message: "Data pengguna berhasil diambil",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error saat mengambil data pengguna:", error);
+    res.status(401).json({
+      status: false,
+      message: error.message || "Tidak diizinkan",
+      data: null,
+    });
+  }
+}
+
 module.exports = {
   changePasswordController,
   sendResetPasswordEmailController,
   resetPasswordController,
+  whoamiController
 };

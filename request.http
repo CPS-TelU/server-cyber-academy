@@ -25,7 +25,7 @@ Content-Type: application/json
     "name"  : "Adam",
     "nim"   : "1101213133",
     "className": "TT-45-09",
-    "email" : "adam@gmail.com",
+    "email" : "maucuan429@gmail.com",
     "noHp": "081332938169",
     "gender": "Male",
     "faculty": "Electrical Engineering",
@@ -54,12 +54,13 @@ Content-Type: application/json
 }
 
 ### change password
-PUT  http://localhost:3000/api/user/change-password/1
+PATCH http://localhost:3000/api/user/change-password
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsIm5hbWUiOiJBZGFtIFdpc251IFByYWRhbmEiLCJpYXQiOjE3MjkzNTUzMzUsImV4cCI6MTcyOTQ0MTczNX0.AVZExqGW4FLjmdGQdtXU5FBwTrSK0UaY1RkAAHcwZvA
 
 {
-    "oldPassword": "sayyid123",
-    "newPassword": "sayyid12345"
+    "oldPassword": "adam12345",
+    "newPassword": "1101213133ca2024"
 }
 
 ### forgot password
@@ -69,3 +70,7 @@ Content-Type: application/json
 {
     "email": "sayyid@gmail.com"
 }
+
+### whoami
+GET http://localhost:3000/api/user/whoami
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTEsIm5hbWUiOiJBZGFtIFdpc251IFByYWRhbmEiLCJpYXQiOjE3MjkzNTUzMzUsImV4cCI6MTcyOTQ0MTczNX0.AVZExqGW4FLjmdGQdtXU5FBwTrSK0UaY1RkAAHcwZvA

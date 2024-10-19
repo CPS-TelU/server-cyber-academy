@@ -2,15 +2,15 @@ const userService = require("../services/userService");
 
 const changePasswordController = async (req, res) => {
   try {
-    const { id } = req.params;
-    const numbId = parseInt(id);
+    const id = req.user.id;
     const { oldPassword, newPassword } = req.body;
 
     const updatedUser = await userService.changePassword(
-      numbId,
+      id,
       oldPassword,
       newPassword
     );
+
     return res.status(200).json({
       status: true,
       message: "Password berhasil diperbarui",
@@ -80,11 +80,11 @@ const whoamiController = async (req, res) => {
       data: null,
     });
   }
-}
+};
 
 module.exports = {
   changePasswordController,
   sendResetPasswordEmailController,
   resetPasswordController,
-  whoamiController
+  whoamiController,
 };

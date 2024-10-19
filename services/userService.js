@@ -20,6 +20,9 @@ const changePassword = async (id, oldPassword, newPassword) => {
   const updatedUser = await userRepository.updateUserById(id, {
     password: hashedPassword,
   });
+
+  delete updatedUser.password;
+
   return updatedUser;
 };
 
@@ -68,13 +71,15 @@ const whoamiService = async (id) => {
     throw new Error("User tidak ditemukan");
   }
 
-  return user
-}
+  delete user.password;
+
+  return user;
+};
 
 module.exports = {
   changePassword,
   sendResetPasswordEmail,
   forgotPassword,
   resetPassword,
-  whoamiService
+  whoamiService,
 };

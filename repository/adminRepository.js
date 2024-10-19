@@ -42,7 +42,7 @@ const uploadModule = async (name, fileUrl, opened_at) => {
     const result = await prisma.modul.create({
         data: {
             name,
-            file: fileUrl,
+            link: fileUrl,
             opened_at: new Date(opened_at).toISOString(),
             // user: {
             //     connect: {

@@ -6,17 +6,9 @@ const expressLayouts = require("express-ejs-layouts");
 const { Server: SocketServer } = require("socket.io");
 
 const topicRoutes = require("./routes/topicRoutes.js");
-// const questionRoutes = require("./routes/questionRoutes.js");
-// const answerRoutes = require("./routes/answerRoutes.js");
-// const userAuthRoutes = require("./routes/userAuthRoutes");
-// const adminCmsRoutes = require("./routes/adminCmsRoutes");
-// const adminRoutes = require("./routes/adminroutes.js");
-
-// const modulRoutes = require("./routes/modulRoutes");
 const certificateRoutes = require("./routes/certificateRoutes");
 const groupRoutes = require("./routes/groupRoutes.js");
 const submissionRoutes = require("./routes/submissionRoutes");
-
 const questionRoutes = require("./routes/questionRoutes.js");
 const answerRoutes = require("./routes/answerRoutes.js");
 const moduleRoutes = require("./routes/modulRoutes.js");

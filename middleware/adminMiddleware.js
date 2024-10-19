@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const accessValidation = async (req, res, next) => {
+const adminValidation = async (req, res, next) => {
     const { authorization } = req.headers;
 
     if (!authorization) {

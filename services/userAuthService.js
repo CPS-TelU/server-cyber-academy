@@ -1,64 +1,99 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
-const { registerUser, getUserByNim, blacklistToken } = require('../repository/userAuthRepository');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+const {
+  registerUser,
+  getUserByNim,
+  blacklistToken,
+  getUserByEmail,
+} = require("../repository/userAuthRepository");
 
-const registerUserService = async (name, nim, className, email, noHp, gender, faculty, year, major, password, document, github) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const registerUserService = async (
+  name,
+  nim,
+  className,
+  email,
+  noHp,
+  gender,
+  faculty,
+  year,
+  major,
+  document,
+  github
+) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(email)) {
-        return {
-            status: false,
-            message: "Invalid email format."
-        };
-    }
-    
-    if (password.length < 6) {
-        return {
-            status: false,
-            message: "Password must be longer than 6 characters."
-        };
-    }
-    
-    const hashedPassword = await bcrypt.hash(password, 10);
-    
-    await registerUser(name, nim, className, email, noHp, gender, faculty, year, major, hashedPassword, document, github);
-    return { 
-        status: true, 
-        message: 'Account created' 
-    };
+  if (!emailRegex.test(email)) {
+    throw new Error("Format email tidak valid.");
+  }
+
+  const existingUserByNIM = await getUserByNim(nim);
+  if (existingUserByNIM) {
+    throw new Error("NIM sudah terdaftar.");
+  }
+
+  const existingUserByEmail = await getUserByEmail(email);
+  if (existingUserByEmail) {
+    throw new Error("Email sudah terdaftar.");
+  }
+
+  const rawPassword = nim + "ca2024";
+
+  const hashedPassword = await bcrypt.hash(rawPassword, 10);
+
+  const user = await registerUser(
+    name,
+    nim,
+    className,
+    email,
+    noHp,
+    gender,
+    faculty,
+    year,
+    major,
+    hashedPassword,
+    document,
+    github
+  );
+
+  return user;
 };
 
 const loginUserService = async (nim, password) => {
-    const user = await getUserByNim(nim);
+  if (!nim || !password) {
+    throw new Error("NIM dan password harus diisi");
+  }
 
-    if (!user) {
-        throw new Error('User not found');
-    }
+  const user = await getUserByNim(nim);
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-        throw new Error('Invalid credentials');
-    }
+  if (!user) {
+    throw new Error("User tidak ditemukan");
+  }
 
-    const payload = { id: user.id, name: user.name };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24h' });
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    throw new Error("Kredensial tidak valid");
+  }
 
-    return {
-        status: true,
-        message: 'Login success',
-        payload,
-        token,
-    };
+  const payload = { id: user.id, name: user.name };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+  return {
+    status: true,
+    message: "Login berhasil",
+    payload,
+    token,
+  };
 };
 
 const logoutUserService = async (token) => {
-    try {
-        await blacklistToken(token);
-        return { success: true, message: 'Logout successful.' };
-    } catch (error) {
-        return { success: false, message: 'An error occurred during logout.' };
-    }
+  try {
+    await blacklistToken(token);
+    return { success: true, message: "Logout successful." };
+  } catch (error) {
+    return { success: false, message: "An error occurred during logout." };
+  }
 };
 
-module.exports = { registerUserService, loginUserService, logoutUserService }
+module.exports = { registerUserService, loginUserService, logoutUserService };

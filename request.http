@@ -1,0 +1,63 @@
+### register
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+    "name"  : "Adam",
+    "nim"   : "110121313311",
+    "className": "TT-45-09",
+    "email" : "adam1@gmail.com",
+    "noHp": "081332938169",
+    "gender": "Male",
+    "faculty": "Electrical Engineering",
+    "year": "2021",
+    "major": "Telecommunication Engineering",
+    "password" : "adam123",
+    "document": "document_link_here",
+    "github": "https://github.com/adamwisnup"
+}
+
+### register prod
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+    "name"  : "Adam",
+    "nim"   : "1101213133",
+    "className": "TT-45-09",
+    "email" : "adam@gmail.com",
+    "noHp": "081332938169",
+    "gender": "Male",
+    "faculty": "Electrical Engineering",
+    "year": "2021",
+    "major": "Telecommunication Engineering",
+    "password" : "adam123",
+    "document": "document_link_here",
+    "github": "https://github.com/adamwisnup"
+}
+
+### login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+    "nim" : "1101213133",
+    "password" : "1101213133ca2024"
+}
+
+### change password
+PUT  http://localhost:3000/api/user/change-password/1
+Content-Type: application/json
+
+{
+    "oldPassword": "sayyid123",
+    "newPassword": "sayyid12345"
+}
+
+### forgot password
+POST http://localhost:3000/api/user/forgot-password
+Content-Type: application/json
+
+{
+    "email": "sayyid@gmail.com"
+}

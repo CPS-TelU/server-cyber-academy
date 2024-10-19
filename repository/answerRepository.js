@@ -9,8 +9,8 @@ const createAnswer = async (answerData) => {
     data: {
       messages: answerData.message,
       image: answerData.image,
-      userId: answerData.userId,
-      questionId: answerData.questionId,
+      user_id: answerData.userId,
+      question_id: answerData.questionId,
     },
   });
 };
@@ -21,10 +21,10 @@ const updateAnswer = async (id, answer) => {
     data: answer,
   });
 };
-const findAnswerByQuestionId = async (questionId) => {
+const findAnswerByQuestionId = async (question_id) => {
   return await prisma.answer.findMany({
     where: {
-      questionId: questionId,
+      question_id: question_id,
     },
   });
 };

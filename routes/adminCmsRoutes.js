@@ -9,13 +9,13 @@ const upload = multer({ storage });
 router.get('/admin', async (req, res) => {
     try {
         // Ambil semua data peserta dari tabel user
-        const users = await prisma.users.findMany({
+        const users = await prisma.user.findMany({
           include: {
               groups: true, // Ini akan memuat relasi groups untuk setiap user
           },
       });
-        const tasks = await prisma.tasks.findMany();
-        const submissions = await prisma.submisions.findMany();
+        const tasks = await prisma.task.findMany();
+        const submissions = await prisma.submission.findMany();
 
         // Hitung jumlah total peserta
         const participantsCount = users.length;
@@ -34,7 +34,7 @@ router.get('/admin', async (req, res) => {
                 nama: user.name,
                 nim: user.nim,
                 className: user.className,
-                git: `https://github.com/${user.name.toLowerCase().replace(' ', '')}` // Contoh link GitHub dinamis
+                git: user.github // Contoh link GitHub dinamis
             }))
         });
     } catch (error) {
@@ -46,7 +46,7 @@ router.get('/admin', async (req, res) => {
   router.get('/tasks', async (req, res) => {
     try {
       // Mengambil data sertifikat dari database menggunakan Prisma
-      const tasks = await prisma.tasks.findMany();
+      const tasks = await prisma.task.findMany();
   
       // Mengirimkan data sertifikat ke view EJS
       res.render('tasks', { 
@@ -62,7 +62,7 @@ router.get('/admin', async (req, res) => {
   router.get('/module', async (req, res) => {
     try {
       // Mengambil data sertifikat dari database menggunakan Prisma
-      const moduls = await prisma.moduls.findMany();
+      const moduls = await prisma.modul.findMany();
   
       // Mengirimkan data sertifikat ke view EJS
       res.render('module', { 
@@ -78,7 +78,7 @@ router.get('/admin', async (req, res) => {
 router.get('/submission', async (req, res) => {
   try {
     // Mengambil data sertifikat dari database menggunakan Prisma
-    const submissions = await prisma.submisions.findMany({
+    const submissions = await prisma.submission.findMany({
       include: {
           users: true,  // Pastikan `users` di-include
           groups: true, // Jika ada relasi dengan groups
@@ -100,7 +100,7 @@ router.get('/submission', async (req, res) => {
   router.get('/certificate', async (req, res) => {
     try {
       // Mengambil data sertifikat dari database menggunakan Prisma
-      const certificates = await prisma.certifications.findMany({
+      const certificates = await prisma.certification.findMany({
         include: {
           users: true // Misalnya jika Anda ingin mengambil relasi dengan tabel user
         }
@@ -152,7 +152,7 @@ router.get('/module/edit/:id', async (req, res) => {
 
   try {
       // Mengambil data module dari database berdasarkan ID
-      const moduleData = await prisma.moduls.findUnique({
+      const moduleData = await prisma.modul.findUnique({
           where: { id: moduleId }
       });
 
@@ -199,7 +199,7 @@ router.put('/module/update/:id', upload.single('file'), async (req, res) => {
 
   try {
       // Update modul di database
-      const updatedModule = await prisma.module.update({
+      const updatedModule = await prisma.modul.update({
           where: { id: moduleId },
           data: {
               name: name || undefined,
@@ -222,7 +222,7 @@ router.delete('/certificate/delete/:id', async (req, res) => {
 
   try {
       // Hapus data module dari database
-      await prisma.certifications.delete({
+      await prisma.certification.delete({
           where: { id: moduleId }
       });
 

@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const { handleFileUpload, handleSertifUpload, handleTaskUpload, registerAdminService } = require('../services/adminservice');
+const { handleFileUpload, handleSertifUpload, handleTaskUpload, registerAdminService, loginAdminService } = require('../services/adminservice');
 
 const uploadFile = async (req, res) => {
     try {
@@ -82,6 +82,15 @@ const registerAdminController = async (req, res) => {
       }
 }
 
+const loginAdminController = async (req, res) => {
+    try {
+      const login = await loginAdminService(req.body.username, req.body.password);
+      res.status(200).json(login);
+    } catch (error) {
+      res.status(400).json({error: error.message});
+    }
+}
+
 module.exports = {
-    uploadFile, uploadSerti, uploadTask, registerAdminController
+    uploadFile, uploadSerti, uploadTask, registerAdminController, loginAdminController
 };

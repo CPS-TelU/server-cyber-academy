@@ -1,7 +1,7 @@
 const answerRepository = require("../repository/answerRepository.js");
-const imagekit = require("../libs/imagekit.js");
+const imagekit = require("../libs/imageKit.js");
 
-const createAnswer = async (messages, file, userId, questionId) => {
+const createAnswer = async (messages, file, user_id, question_id) => {
   try {
     let image = null;
     if (file) {
@@ -15,8 +15,8 @@ const createAnswer = async (messages, file, userId, questionId) => {
     const answerData = {
       messages,
       image,
-      userId,
-      questionId,
+      user_id,
+      question_id,
     };
     return await answerRepository.createAnswer(answerData);
   } catch (error) {
@@ -51,9 +51,9 @@ const updatedAnswer = async (id, messages, file) => {
   }
 };
 
-const findAnswerByQuestionId = async (questionId) => {
+const findAnswerByQuestionId = async (question_id) => {
   try {
-    return await answerRepository.findAnswerByQuestionId(questionId);
+    return await answerRepository.findAnswerByQuestionId(question_id);
   } catch (error) {
     console.error("Error in findAnswerByQuestionId service: ", error);
     throw new Error("Failed to find answer by question ID");

@@ -35,6 +35,8 @@ let corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -53,6 +55,9 @@ app.get("/", (req, res) => {
 app.use("/api/auth", userAuthRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/cms", adminCmsRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api", moduleRoutes);
+app.use("/user", userAuthRoutes);
 
 // by Mitchel
 app.use("/api/moduls", moduleRoutes);
@@ -60,34 +65,14 @@ app.use("/api/certificate", certificateRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/submissions", submissionRoutes);
 
-// Server setup for Socket.io
-// Middleware
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
-app.use(expressLayouts);
-app.set("view engine", "ejs");
-app.set("layout", "layout");
-
 // Routes
 app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
 
-app.use("/api", moduleRoutes);
-app.use("/user", userAuthRoutes);
-
-app.use(express.static(path.join(__dirname, "public")));
-app.use(expressLayouts);
-app.set("layout", "layout");
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-app.use("/api/auth", userAuthRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/cms", adminCmsRoutes);
-app.use("/api/user", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

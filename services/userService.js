@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const userRepository = require("../repository/userRepository");
 const nodemailer = require("../libs/nodemailer");
+const { sendMail, getHTML } = require("../libs/nodemailer");
+const { SERVER_EMAIL } = process.env;
 
 const changePassword = async (id, oldPassword, newPassword) => {
   const user = await userRepository.getUserById(id);

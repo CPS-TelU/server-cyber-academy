@@ -4,9 +4,9 @@ Content-Type: application/json
 
 {
     "name"  : "Adam",
-    "nim"   : "110121313311",
+    "nim"   : "1101213133",
     "className": "TT-45-09",
-    "email" : "adam1@gmail.com",
+    "email" : "maucuan429@gmail.com",
     "noHp": "081332938169",
     "gender": "Male",
     "faculty": "Electrical Engineering",
@@ -18,7 +18,7 @@ Content-Type: application/json
 }
 
 ### register prod
-POST http://localhost:3000/api/auth/register
+POST https://be-cyber-academy.vercel.app/api/auth/register
 Content-Type: application/json
 
 {

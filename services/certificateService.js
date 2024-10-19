@@ -1,32 +1,33 @@
-let certificates = [];
+// certificateService.js
+const certificateRepository = require('../repository/certificateRepository');
 
-const addCertificate = (name, certificate) => {
-    if (!name || typeof name !== 'string') {
-        throw new Error('Invalid name');
-    }
-    if (!certificate || typeof certificate !== 'string') {
-        throw new Error('Invalid certificate');
-    }
-
-    const newCertificate = { name, certificate };
-    certificates.push(newCertificate);
-    return newCertificate;
+const getAllCertificates = async () => {
+    return await certificateRepository.getAllCertificates();
 };
 
-const getCertificatesByName = (name) => {
-    if (!name || typeof name !== 'string') {
-        throw new Error('Invalid name');
-    }
+const getCertificateById = async (id) => {
+    return await certificateRepository.getCertificateById(id);
+};
 
-    // Filter certificates by the provided name
-    const result = certificates.filter(cert => cert.name === name);
-    if (result.length === 0) {
-        throw new Error('No certificates found for the given name');
+const createCertificate = async (data) => {
+    if (!data.name || !data.image || !data.user_id) {
+        throw new Error('Name, Image, and User ID are required');
     }
-    return result;
+    return await certificateRepository.createCertificate(data);
+};
+
+const updateCertificate = async (id, data) => {
+    return await certificateRepository.updateCertificate(id, data);
+};
+
+const deleteCertificate = async (id) => {
+    return await certificateRepository.deleteCertificate(id);
 };
 
 module.exports = {
-    addCertificate,
-    getCertificatesByName,
+    getAllCertificates,
+    getCertificateById,
+    createCertificate,
+    updateCertificate,
+    deleteCertificate
 };

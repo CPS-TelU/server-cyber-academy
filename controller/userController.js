@@ -1,4 +1,7 @@
 const userService = require("../services/userService");
+const nodemailer = require("../libs/nodemailer");
+const { JWT_SECRET } = process.env;
+const jwt = require("jsonwebtoken");
 
 const changePasswordController = async (req, res) => {
   try {
@@ -25,14 +28,47 @@ const changePasswordController = async (req, res) => {
   }
 };
 
-const sendResetPasswordEmailController = async (req, res) => {
+const sendForgotPasswordEmailController = async (req, res) => {
   try {
     const { email } = req.body;
 
-    await userService.forgotPassword(email);
+    if (!email) {
+      return res.status(400).json({
+        status: false,
+        message: "Email is required",
+        data: null,
+      });
+    }
+
+    const user = await userService.getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+        data: null,
+      });
+    }
+
+    const token = jwt.sign({ email: user.email }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    const url = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/reset-password?token=${token}`;
+
+    const html = await nodemailer.getHTML("resetPassword.ejs", {
+      name: user.name,
+      url: url,
+    });
+
+    // Kirim email reset password
+    await nodemailer.sendMail(email, "Reset Password", html);
+
     return res.status(200).json({
       status: true,
-      message: "Email berhasil dikirim",
+      message: "Email forgot password successfully sent",
       data: null,
     });
   } catch (error) {
@@ -46,14 +82,24 @@ const sendResetPasswordEmailController = async (req, res) => {
 
 const resetPasswordController = async (req, res) => {
   try {
-    const { email, token, newPassword } = req.body;
+    const { token } = req.query;
+    const { newPassword, confirmPassword } = req.body;
 
-    await userService.resetPassword(email, token, newPassword);
-    return res.status(200).json({
-      status: true,
-      message: "Password berhasil direset",
-      data: null,
-    });
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (decoded) {
+      const updatedUser = await userService.resetPassword(
+        decoded.email,
+        token,
+        newPassword,
+        confirmPassword
+      );
+
+      return res.status(200).json({
+        status: true,
+        message: "Password berhasil direset",
+        data: updatedUser,
+      });
+    }
   } catch (error) {
     return res.status(400).json({
       status: false,
@@ -84,7 +130,7 @@ const whoamiController = async (req, res) => {
 
 module.exports = {
   changePasswordController,
-  sendResetPasswordEmailController,
-  resetPasswordController,
+  sendForgotPasswordEmailController,
   whoamiController,
+  resetPasswordController,
 };

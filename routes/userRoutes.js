@@ -11,7 +11,7 @@ router.patch(
 );
 router.post(
   "/forgot-password",
-  userController.sendResetPasswordEmailController
+  userController.sendForgotPasswordEmailController
 );
 router.post("/reset-password", userController.resetPasswordController);
 router.get("/whoami", accessValidation, userController.whoamiController);

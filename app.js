@@ -30,8 +30,9 @@ let corsOptions = {
     "https://be-cyber-academy-7wkpnj4ck-adamwisnups-projects.vercel.app",
     "https://fe-cyberacademy2024.vercel.app",
   ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.set("view engine", "ejs");

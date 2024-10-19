@@ -57,7 +57,6 @@ app.use("/api/admin", adminRoutes);
 app.use("/cms", adminCmsRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api", moduleRoutes);
-app.use("/user", userRoutes);
 
 // by Mitchel
 app.use("/api/moduls", moduleRoutes);

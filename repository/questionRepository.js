@@ -40,7 +40,7 @@ const getQuestionsByTopicId = async (topic_id) => {
   try {
     const questions = await prisma.question.findMany({
       where: {
-        topic_id: String(topic_id),
+        topic_id,
       },
     });
     return questions;

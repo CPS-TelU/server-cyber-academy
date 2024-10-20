@@ -1,8 +1,5 @@
 const bcrypt = require("bcrypt");
 const userRepository = require("../repository/userRepository");
-const nodemailer = require("../libs/nodemailer");
-const { sendMail, getHTML } = require("../libs/nodemailer");
-const { SERVER_EMAIL } = process.env;
 
 const changePassword = async (id, oldPassword, newPassword) => {
   const user = await userRepository.getUserById(id);
@@ -26,42 +23,32 @@ const changePassword = async (id, oldPassword, newPassword) => {
   return updatedUser;
 };
 
-const sendResetPasswordEmail = async (email, token) => {
-  const html = await nodemailer.getHTML("reset-password.ejs", {
-    token,
-  });
-
-  await nodemailer.sendMail(email, "Reset Password", html);
-};
-
-const forgotPassword = async (email) => {
+const resetPassword = async (email, token, password, confirmPassword) => {
   const user = await userRepository.getUserByemail(email);
   if (!user) {
-    throw new Error("User tidak ditemukan");
+    throw new Error("User not found");
   }
 
-  const token = await bcrypt.hash(email, 10);
-  await sendResetPasswordEmail(email, token);
-
-  return user;
-};
-
-const resetPassword = async (email, token, newPassword) => {
-  const user = await userRepository.getUserByemail(email);
-  if (!user) {
-    throw new Error("User tidak ditemukan");
+  if (!token) {
+    throw new Error("Invalid token");
   }
 
-  const isTokenMatch = await bcrypt.compare(email, token);
-  if (!isTokenMatch) {
-    throw new Error("Token salah");
+  if (!password || !confirmPassword) {
+    throw new Error("Password fields cannot be empty");
   }
 
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  if (password !== confirmPassword) {
+    throw new Error("Passwords do not match");
+  }
 
-  const updatedUser = await userRepository.updateUserById(user.id, {
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const updatedUser = await userRepository.updateUserByEmail(email, {
     password: hashedPassword,
   });
+
+  delete updatedUser.password;
+
   return updatedUser;
 };
 
@@ -76,10 +63,18 @@ const whoamiService = async (id) => {
   return user;
 };
 
+const getUserByEmail = async (email) => {
+  const user = await userRepository.getUserByemail(email);
+  if (!user) {
+    throw new Error("User tidak ditemukan");
+  }
+
+  return user;
+};
+
 module.exports = {
   changePassword,
-  sendResetPasswordEmail,
-  forgotPassword,
   resetPassword,
   whoamiService,
+  getUserByEmail,
 };

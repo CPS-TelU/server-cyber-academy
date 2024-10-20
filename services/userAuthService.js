@@ -77,7 +77,7 @@ const loginUserService = async (nim, password) => {
 
   const payload = { id: user.id, name: user.name };
 
-  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
 
   return {
     status: true,

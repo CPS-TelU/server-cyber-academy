@@ -36,11 +36,11 @@ const updateAnswer = async (req, res) => {
     const { id } = req.params;
     const { messages } = req.body;
     const file = req.file;
-    const updatedAnswer = await answerService.updatedAnswer(id, messages, file);
+    const updateAnswer = await answerService.updateAnswer(id, messages, file);
     res.status(200).json({
       success: true,
       message: "Answer updated successfully",
-      data: updatedAnswer,
+      data: updateAnswer,
     });
   } catch (error) {
     console.error("Error in updatedAnswer: ", error);

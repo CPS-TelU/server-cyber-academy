@@ -23,7 +23,7 @@ const changePassword = async (id, oldPassword, newPassword) => {
   return updatedUser;
 };
 
-const resetPassword = async (email, token, newPassword, confirmPassword) => {
+const resetPassword = async (email, token, password, confirmPassword) => {
   const user = await userRepository.getUserByemail(email);
   if (!user) {
     throw new Error("User not found");
@@ -33,19 +33,21 @@ const resetPassword = async (email, token, newPassword, confirmPassword) => {
     throw new Error("Invalid token");
   }
 
-  if (!newPassword || !confirmPassword) {
+  if (!password || !confirmPassword) {
     throw new Error("Password fields cannot be empty");
   }
 
-  if (newPassword !== confirmPassword) {
+  if (password !== confirmPassword) {
     throw new Error("Passwords do not match");
   }
 
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const updatedUser = await userRepository.updateUserByEmail(email, {
     password: hashedPassword,
   });
+
+  delete updatedUser.password;
 
   return updatedUser;
 };

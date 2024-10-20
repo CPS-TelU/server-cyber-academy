@@ -28,12 +28,12 @@ const updateQuestion = async (id, questions) => {
 
 const deleteQuestion = async (id) => {
   return await prisma.question.delete({
-    where: { id: parseInt(id) },
+    where: { id: String(id) },
   });
 };
 const getQuestionById = async (id) => {
   return await prisma.question.findUnique({
-    where: { id: parseInt(id) },
+    where: { id: String(id) },
   });
 };
 const getQuestionsByTopicId = async (topic_id) => {

@@ -37,7 +37,7 @@ const updateQuestion = async (req, res) => {
     const { id } = req.params;
     const { messages } = req.body;
     const file = req.file;
-    const updatedQuestion = await questionService.updatedQuestion(
+    const updatedQuestion = await questionService.updateQuestion(
       id,
       messages,
       file

@@ -20,12 +20,22 @@ const updateUserById = async (id, user) => {
 };
 
 const getUserByemail = async (email) => {
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findUnique({
     where: {
       email: email,
     },
   });
   return user;
+};
+
+const updateUserByEmail = async (email, user) => {
+  const updatedUser = await prisma.user.update({
+    where: {
+      email: email,
+    },
+    data: user,
+  });
+  return updatedUser;
 };
 
 const findAllUsers = async () => {
@@ -41,4 +51,5 @@ module.exports = {
   updateUserById,
   getUserByemail,
   findAllUsers,
+  updateUserByEmail,
 };

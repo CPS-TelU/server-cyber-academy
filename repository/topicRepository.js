@@ -1,22 +1,19 @@
 const prisma = require("../config/db.js");
 
-const createTopic = async (topic) => {
-  if (!topic.title || !topic.userId) {
+const createTopic = async (topicData) => {
+  if (!topicData.title || !topicData.user_id) {
     throw new Error("Title and userId are required fields.");
   }
   const userExists = await prisma.user.findUnique({
-    where: { id: topic.userId },
+    where: { id: topicData.user_id },
   });
-
   if (!userExists) {
-    throw new Error("Invalid userId: User does not exist.");
+    throw new Error("Invalid user_id: User does not exist.");
   }
-
-  // Membuat topik dengan userId yang diberikan
   return await prisma.topic.create({
     data: {
-      title: topic.title,
-      userId: topic.userId,
+      title: topicData.title,
+      user_id: topicData.user_id,
     },
   });
 };

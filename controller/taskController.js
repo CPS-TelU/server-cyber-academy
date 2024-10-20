@@ -44,8 +44,25 @@ const getTask = (req, res) => {
     }
 };
 
+const getTaskPage = async (req, res) => {
+    try {
+      // Ambil data task dari service
+      const tasks = await taskService.getTaskList();
+  
+      // Render ke halaman tasks.ejs
+      res.render('tasks', { 
+        taskList: tasks,
+        title: 'Task Upload' 
+      });
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      res.status(500).send('Server Error');
+    }
+  };
+
 module.exports = {
     postTask,
     getTasks,
     getTask,
+    getTaskPage,
 };

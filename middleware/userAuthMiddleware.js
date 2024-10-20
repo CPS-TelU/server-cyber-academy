@@ -16,13 +16,13 @@ const accessValidation = async (req, res, next) => {
 
     const token = authorization.split(" ")[1];
 
-    const blacklistedToken = await prisma.blacklistedToken.findUnique({
-        where: { token },
-    });
+    // const blacklistedToken = await prisma.blacklistedToken.findUnique({
+    //     where: { token },
+    // });
 
-    if (blacklistedToken) {
-        return res.status(403).json({ message: 'Token has been logged out.' });
-    }
+    // if (blacklistedToken) {
+    //     return res.status(403).json({ message: 'Token has been logged out.' });
+    // }
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {

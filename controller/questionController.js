@@ -1,15 +1,14 @@
 const questionService = require("../services/questionService.js");
 const createQuestion = async (req, res) => {
   try {
-    const { messages, topicId } = req.body;
+    const { messages, topic_id, user_id } = req.body;
     const file = req.file;
-    const userId = req.userId?.id;
     //debugging API
     console.log("Message: ", messages);
-    console.log("User ID: ", userId);
-    console.log("Topic ID: ", topicId);
+    console.log("User ID: ", user_id);
+    console.log("Topic ID: ", topic_id);
     console.log("File: ", file);
-    if (!messages || !userId || !topicId) {
+    if (!messages || !user_id || !topic_id) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
@@ -17,8 +16,8 @@ const createQuestion = async (req, res) => {
     const question = await questionService.createQuestion(
       messages,
       file,
-      userId,
-      topicId
+      user_id,
+      topic_id
     );
     return res.status(201).json({
       success: true,
@@ -38,7 +37,7 @@ const updateQuestion = async (req, res) => {
     const { id } = req.params;
     const { messages } = req.body;
     const file = req.file;
-    const updatedQuestion = await questionService.updatedQuestion(
+    const updatedQuestion = await questionService.updateQuestion(
       id,
       messages,
       file

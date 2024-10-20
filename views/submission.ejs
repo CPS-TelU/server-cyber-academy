@@ -27,14 +27,14 @@
         <% submissionList.forEach(submission => { %>
           <tr>
             <td><%= submission.id %></td>
-            <td><%= submission.users.name %></td>
+            <td><%= submission.user.name %></td>
             <td><%= submission.created_at %></td>
-            <td><%= submission.groups.groupName %></td>
-            <td><%= submission.tasks.title %></td>
+            <td><%= submission.groups ? submission.groups.groupName : 'No Group' %></td>
+            <td><%= submission.task.title %></td>
             <td><%= submission.submitted %></td>
             <td>
               <!-- <button class="btn btn-primary">Edit</button> -->
-              <a href="/cms/submission/spectate" class="btn btn-primary">Edit</a>
+              <a href="/cms/submission/spectate" class="btn btn-primary">Grade</a>
             </td>
           </tr>
         <% }) %>

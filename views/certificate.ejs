@@ -1,16 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Submission List</title>
+  <title>Certificate Upload</title>
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <div class="container">
-    <!-- <h1>Certificate Upload</h1> -->
     <a href="/cms/certificate/add" class="btn btn-success">NEW</a>
     <table class="table table-striped">
       <thead>
@@ -32,12 +30,38 @@
             <td><%= certificate.grade %></td>
             <td><%= certificate.status %></td>
             <td>
-              <button class="btn btn-primary">Edit</button>
+              <!-- Tombol Edit -->
+              <a href="/cms/certificate/edit/<%= certificate.id %>" class="btn btn-primary">Edit</a>
+              
+              <!-- Tombol Delete -->
+              <button class="btn btn-danger" onclick="deleteCertificate('<%= certificate.id %>')">Delete</button>
             </td>
           </tr>
         <% }) %>
       </tbody>
     </table>
   </div>
+
+  <script>
+    async function deleteCertificate(certificateId) {
+      console.log('Delete button clicked for certificateId:', certificateId);
+        if (confirm('Are you sure you want to delete this certificate?')) {
+            try {
+                const response = await fetch(`/cms/certificate/delete/${certificateId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    // Jika berhasil, reload halaman atau lakukan aksi lain
+                    window.location.reload();
+                } else {
+                    console.error('Error deleting certificate:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    }
+  </script>
 </body>
 </html>

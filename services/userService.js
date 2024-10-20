@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const userRepository = require("../repository/userRepository");
 const nodemailer = require("../libs/nodemailer");
+const { sendMail, getHTML } = require("../libs/nodemailer");
+const { SERVER_EMAIL } = process.env;
 
 const changePassword = async (id, oldPassword, newPassword) => {
   const user = await userRepository.getUserById(id);
@@ -18,6 +20,9 @@ const changePassword = async (id, oldPassword, newPassword) => {
   const updatedUser = await userRepository.updateUserById(id, {
     password: hashedPassword,
   });
+
+  delete updatedUser.password;
+
   return updatedUser;
 };
 
@@ -60,9 +65,21 @@ const resetPassword = async (email, token, newPassword) => {
   return updatedUser;
 };
 
+const whoamiService = async (id) => {
+  const user = await userRepository.getUserById(id);
+  if (!user) {
+    throw new Error("User tidak ditemukan");
+  }
+
+  delete user.password;
+
+  return user;
+};
+
 module.exports = {
   changePassword,
   sendResetPasswordEmail,
   forgotPassword,
   resetPassword,
+  whoamiService,
 };

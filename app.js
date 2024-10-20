@@ -30,6 +30,7 @@ let corsOptions = {
     "https://fe-cyberacademy2024.vercel.app",
     "https://cyberacademy2024.vercel.app",
     "https://ca.cpslaboratory.com",
+    "https://cyberacademy.cpslaboratory.com",
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true,

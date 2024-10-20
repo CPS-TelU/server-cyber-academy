@@ -47,6 +47,8 @@ const resetPassword = async (email, token, password, confirmPassword) => {
     password: hashedPassword,
   });
 
+  delete updatedUser.password;
+
   return updatedUser;
 };
 

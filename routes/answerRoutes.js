@@ -11,6 +11,6 @@ const router = express.Router();
 router.post("/answer", upload.single("image"), createAnswer);
 router.put("/answer/:id", upload.single("image"), updateAnswer);
 router.get("/answers", getAnswers);
-router.get("/answer/:id", findAnswerByQuestionId);
+router.get("/answer/:question_id", findAnswerByQuestionId);
 
 module.exports = router;

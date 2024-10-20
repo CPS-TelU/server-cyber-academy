@@ -74,11 +74,3 @@ Content-Type: application/json
 {
     "email": "maucuan429@gmail.com"
 }
-
-### reset password
-PATCH http://localhost:3000/api/user/reset-password
-Content-Type: application/json
-
-{
-    "password": "1101213133ca2024"
-}

@@ -56,14 +56,13 @@ const sendForgotPasswordEmailController = async (req, res) => {
 
     const url = `${req.protocol}://${req.get(
       "host"
-    )}/api/v1/reset-password?token=${token}`;
+    )}/api/user/reset-password?token=${token}`;
 
     const html = await nodemailer.getHTML("forgotPassword.ejs", {
       name: user.name,
       url: url,
     });
 
-    // Kirim email reset password
     await nodemailer.sendMail(email, "Reset Password", html);
 
     return res.status(200).json({
@@ -83,25 +82,50 @@ const sendForgotPasswordEmailController = async (req, res) => {
 const resetPasswordController = async (req, res) => {
   try {
     const { token } = req.query;
-    const { newPassword, confirmPassword } = req.body;
+    const { password, confirmPassword } = req.body;
+
+    if (!password || !confirmPassword) {
+      return res.status(400).json({
+        status: false,
+        message: "Password fields cannot be empty",
+        data: null,
+      });
+    }
 
     const decoded = jwt.verify(token, JWT_SECRET);
+
     if (decoded) {
       const updatedUser = await userService.resetPassword(
         decoded.email,
         token,
-        newPassword,
+        password,
         confirmPassword
       );
 
       return res.status(200).json({
         status: true,
-        message: "Password berhasil direset",
+        message: "Password successfully updated",
         data: updatedUser,
       });
     }
   } catch (error) {
     return res.status(400).json({
+      status: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
+const resetPasswordPage = async (req, res, next) => {
+  try {
+    let { token } = req.query;
+    res.render("resetPassword.ejs", {
+      token,
+      layout: false,
+    });
+  } catch (error) {
+    res.status(400).json({
       status: false,
       message: error.message,
       data: null,
@@ -133,4 +157,5 @@ module.exports = {
   sendForgotPasswordEmailController,
   whoamiController,
   resetPasswordController,
+  resetPasswordPage,
 };

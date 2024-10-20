@@ -1,6 +1,5 @@
 const bcrypt = require("bcrypt");
 const userRepository = require("../repository/userRepository");
-const nodemailer = require("../libs/nodemailer");
 
 const changePassword = async (id, oldPassword, newPassword) => {
   const user = await userRepository.getUserById(id);
@@ -34,8 +33,12 @@ const resetPassword = async (email, token, newPassword, confirmPassword) => {
     throw new Error("Invalid token");
   }
 
+  if (!newPassword || !confirmPassword) {
+    throw new Error("Password fields cannot be empty");
+  }
+
   if (newPassword !== confirmPassword) {
-    throw new Error("Password not match");
+    throw new Error("Passwords do not match");
   }
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);

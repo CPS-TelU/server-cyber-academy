@@ -100,6 +100,13 @@ const getQuestionById = async (req, res) => {
 const getQuestionsByTopicId = async (req, res) => {
   try {
     const { topic_id } = req.params;
+    // Pengecekan jika topic_id tidak ada atau kosong
+    if (!topic_id) {
+      return res.status(400).json({
+        success: false,
+        message: "topic_id is required",
+      });
+    }
     const questions = await questionService.getQuestionsByTopicId(topic_id);
     res.status(200).json({
       success: true,
@@ -115,6 +122,7 @@ const getQuestionsByTopicId = async (req, res) => {
     });
   }
 };
+
 const deleteQuestion = async (req, res) => {
   try {
     const { id } = req.params;

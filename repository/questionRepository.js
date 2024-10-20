@@ -4,14 +4,19 @@ const getQuestions = async () => {
 };
 
 const createQuestion = async (questionData) => {
-  return await prisma.question.create({
-    data: {
-      messages: questionData.messages,
-      image: questionData.image,
-      topic_id: questionData.topic_id,
-      user_id: questionData.user_id,
-    },
-  });
+  try {
+    return await prisma.question.create({
+      data: {
+        messages: questionData.messages,
+        image: questionData.image,
+        topic_id: questionData.topic_id,
+        user_id: parseInt(questionData.user_id),
+      },
+    });
+  } catch (error) {
+    console.error("Error creating question in repository: ", error);
+    throw new Error("Failed to create question in repository");
+  }
 };
 
 const updateQuestion = async (id, questions) => {
@@ -23,12 +28,12 @@ const updateQuestion = async (id, questions) => {
 
 const deleteQuestion = async (id) => {
   return await prisma.question.delete({
-    where: { id: parseInt(id) },
+    where: { id: String(id) },
   });
 };
 const getQuestionById = async (id) => {
   return await prisma.question.findUnique({
-    where: { id: parseInt(id) },
+    where: { id: String(id) },
   });
 };
 const getQuestionsByTopicId = async (topic_id) => {

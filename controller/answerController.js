@@ -1,13 +1,12 @@
 const answerService = require("../services/answerService.js");
 const createAnswer = async (req, res) => {
   try {
-    const { messages, question_id } = req.body;
+    const { messages, question_id, user_id } = req.body;
     const file = req.file;
-    const user_id = req.user?.id;
     //untuk debugging API
     console.log("Message: ", messages);
-    console.log("User ID: ", user_id);
-    console.log("Question ID: ", question_id);
+    console.log("User_id: ", user_id);
+    console.log("Question_id: ", question_id);
     console.log("File: ", file);
     if (!messages || !user_id || !question_id) {
       return res
@@ -32,7 +31,7 @@ const createAnswer = async (req, res) => {
       .json({ success: false, message: "Failed to create answer" });
   }
 };
-const updatedAnswer = async (req, res) => {
+const updateAnswer = async (req, res) => {
   try {
     const { id } = req.params;
     const { messages } = req.body;
@@ -90,7 +89,7 @@ const findAnswerByQuestionId = async (req, res) => {
 
 module.exports = {
   createAnswer,
-  updatedAnswer,
+  updateAnswer,
   getAnswers,
   findAnswerByQuestionId,
 };

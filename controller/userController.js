@@ -1,4 +1,7 @@
 const userService = require("../services/userService");
+const nodemailer = require("../libs/nodemailer");
+const { JWT_SECRET } = process.env;
+const jwt = require("jsonwebtoken");
 
 const changePasswordController = async (req, res) => {
   try {
@@ -25,14 +28,46 @@ const changePasswordController = async (req, res) => {
   }
 };
 
-const sendResetPasswordEmailController = async (req, res) => {
+const sendForgotPasswordEmailController = async (req, res) => {
   try {
     const { email } = req.body;
 
-    await userService.forgotPassword(email);
+    if (!email) {
+      return res.status(400).json({
+        status: false,
+        message: "Email is required",
+        data: null,
+      });
+    }
+
+    const user = await userService.getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+        data: null,
+      });
+    }
+
+    const token = jwt.sign({ email: user.email }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    const url = `${req.protocol}://${req.get(
+      "host"
+    )}/api/user/reset-password?token=${token}`;
+
+    const html = await nodemailer.getHTML("forgotPassword.ejs", {
+      name: user.name,
+      url: url,
+    });
+
+    await nodemailer.sendMail(email, "Reset Password", html);
+
     return res.status(200).json({
       status: true,
-      message: "Email berhasil dikirim",
+      message: "Email forgot password successfully sent",
       data: null,
     });
   } catch (error) {
@@ -46,16 +81,51 @@ const sendResetPasswordEmailController = async (req, res) => {
 
 const resetPasswordController = async (req, res) => {
   try {
-    const { email, token, newPassword } = req.body;
+    const { token } = req.query;
+    const { password, confirmPassword } = req.body;
 
-    await userService.resetPassword(email, token, newPassword);
-    return res.status(200).json({
-      status: true,
-      message: "Password berhasil direset",
-      data: null,
-    });
+    if (!password || !confirmPassword) {
+      return res.status(400).json({
+        status: false,
+        message: "Password fields cannot be empty",
+        data: null,
+      });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    if (decoded) {
+      const updatedUser = await userService.resetPassword(
+        decoded.email,
+        token,
+        password,
+        confirmPassword
+      );
+
+      return res.status(200).json({
+        status: true,
+        message: "Password successfully updated",
+        data: updatedUser,
+      });
+    }
   } catch (error) {
     return res.status(400).json({
+      status: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
+const resetPasswordPage = async (req, res, next) => {
+  try {
+    let { token } = req.query;
+    res.render("resetPassword.ejs", {
+      token,
+      layout: false,
+    });
+  } catch (error) {
+    res.status(400).json({
       status: false,
       message: error.message,
       data: null,
@@ -84,7 +154,8 @@ const whoamiController = async (req, res) => {
 
 module.exports = {
   changePasswordController,
-  sendResetPasswordEmailController,
-  resetPasswordController,
+  sendForgotPasswordEmailController,
   whoamiController,
+  resetPasswordController,
+  resetPasswordPage,
 };

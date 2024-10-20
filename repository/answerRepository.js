@@ -5,26 +5,31 @@ const getAnswers = async () => {
 };
 
 const createAnswer = async (answerData) => {
-  return await prisma.answer.create({
-    data: {
-      messages: answerData.message,
-      image: answerData.image,
-      user_id: answerData.userId,
-      question_id: answerData.questionId,
-    },
-  });
+  try {
+    return await prisma.answer.create({
+      data: {
+        messages: answerData.messages,
+        image: answerData.image,
+        user_id: parseInt(answerData.user_id, 10),
+        question_id: answerData.question_id,
+      },
+    });
+  } catch (error) {
+    console.error("Error creating answer in repository: ", error);
+    throw new Error("Failed to create answer in repository");
+  }
 };
 
 const updateAnswer = async (id, answer) => {
   return await prisma.answer.update({
-    where: { id: parseInt(id) },
+    where: { id: String(id) },
     data: answer,
   });
 };
 const findAnswerByQuestionId = async (question_id) => {
   return await prisma.answer.findMany({
     where: {
-      question_id: question_id,
+      question_id: String(question_id),
     },
   });
 };

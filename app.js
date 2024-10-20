@@ -16,7 +16,6 @@ const userAuthRoutes = require("./routes/userAuthRoutes.js");
 const adminCmsRoutes = require("./routes/adminCmsRoutes");
 const adminRoutes = require("./routes/adminroutes.js");
 const userRoutes = require("./routes/userRoutes.js");
-
 require("dotenv").config();
 
 const app = express();

@@ -1,9 +1,8 @@
 const questionService = require("../services/questionService.js");
 const createQuestion = async (req, res) => {
   try {
-    const { messages, topic_id } = req.body;
+    const { messages, topic_id, user_id } = req.body;
     const file = req.file;
-    const user_id = req.user_id?.id;
     //debugging API
     console.log("Message: ", messages);
     console.log("User ID: ", user_id);
@@ -38,7 +37,7 @@ const updateQuestion = async (req, res) => {
     const { id } = req.params;
     const { messages } = req.body;
     const file = req.file;
-    const updatedQuestion = await questionService.updatedQuestion(
+    const updatedQuestion = await questionService.updateQuestion(
       id,
       messages,
       file
@@ -100,8 +99,8 @@ const getQuestionById = async (req, res) => {
 };
 const getQuestionsByTopicId = async (req, res) => {
   try {
-    const { topicId } = req.params;
-    const questions = await questionService.getQuestionsByTopicId(topicId);
+    const { topic_id } = req.params;
+    const questions = await questionService.getQuestionsByTopicId(topic_id);
     res.status(200).json({
       success: true,
       message: "Questions retrieved successfully",
@@ -119,7 +118,7 @@ const getQuestionsByTopicId = async (req, res) => {
 const deleteQuestion = async (req, res) => {
   try {
     const { id } = req.params;
-    await questionService.deletedQuestion(id);
+    await questionService.deleteQuestion(id);
     res.status(200).json({
       success: true,
       message: "Question deleted successfully",

@@ -25,7 +25,7 @@ const createAnswer = async (messages, file, user_id, question_id) => {
   }
 };
 
-const updatedAnswer = async (id, messages, file) => {
+const updateAnswer = async (id, messages, file) => {
   try {
     const existingAnswer = await answerRepository.findAnswerById(id);
     if (!existingAnswer) {
@@ -71,7 +71,7 @@ const getAnswers = async () => {
 
 module.exports = {
   createAnswer,
-  updatedAnswer,
+  updateAnswer,
   findAnswerByQuestionId,
   getAnswers,
 };

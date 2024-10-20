@@ -24,7 +24,7 @@ const createQuestion = async (messages, file, user_id, topic_id) => {
     throw new Error("Failed to create question");
   }
 };
-const updatedQuestion = async (id, messages, files) => {
+const updateQuestion = async (id, messages, files) => {
   try {
     const existingQuestion = await questionRepository.getQuestionById(id);
     if (!existingQuestion) {
@@ -55,7 +55,7 @@ const getQuestionById = async (id) => {
 const getQuestionsByTopicId = async (topic_id) => {
   return questionRepository.getQuestionsByTopicId(topic_id);
 };
-const deletedQuestion = async (id) => {
+const deleteQuestion = async (id) => {
   return questionRepository.deleteQuestion(id);
 };
 const getQuestions = async () => {
@@ -63,9 +63,9 @@ const getQuestions = async () => {
 };
 module.exports = {
   createQuestion,
-  updatedQuestion,
+  updateQuestion,
   getQuestionById,
   getQuestionsByTopicId,
-  deletedQuestion,
+  deleteQuestion,
   getQuestions,
 };

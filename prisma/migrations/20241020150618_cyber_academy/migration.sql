@@ -11,7 +11,7 @@ CREATE TABLE "users" (
     "major" TEXT NOT NULL,
     "faculty" TEXT NOT NULL,
     "document" TEXT NOT NULL,
-    "github" TEXT NOT NULL,
+    "github" TEXT,
     "year" TEXT NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")

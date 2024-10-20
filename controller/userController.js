@@ -58,7 +58,7 @@ const sendForgotPasswordEmailController = async (req, res) => {
       "host"
     )}/api/v1/reset-password?token=${token}`;
 
-    const html = await nodemailer.getHTML("resetPassword.ejs", {
+    const html = await nodemailer.getHTML("forgotPassword.ejs", {
       name: user.name,
       url: url,
     });

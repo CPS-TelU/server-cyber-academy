@@ -29,6 +29,7 @@ let corsOptions = {
     "https://be-cyber-academy-7wkpnj4ck-adamwisnups-projects.vercel.app",
     "https://fe-cyberacademy2024.vercel.app",
     "https://cyberacademy2024.vercel.app",
+    "https://ca.cpslaboratory.com",
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true,
@@ -38,6 +39,7 @@ let corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(expressLayouts);

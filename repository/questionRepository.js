@@ -21,7 +21,7 @@ const createQuestion = async (questionData) => {
 
 const updateQuestion = async (id, questions) => {
   return await prisma.question.update({
-    where: { id: parseInt(id) },
+    where: { id: String(id) },
     data: questions,
   });
 };
@@ -37,11 +37,17 @@ const getQuestionById = async (id) => {
   });
 };
 const getQuestionsByTopicId = async (topic_id) => {
-  return await prisma.question.findMany({
-    where: {
-      topicId: parseInt(topic_id),
-    },
-  });
+  try {
+    const questions = await prisma.question.findMany({
+      where: {
+        topic_id: String(topic_id),
+      },
+    });
+    return questions;
+  } catch (error) {
+    console.error("Failed to retrieve questions:", error);
+    throw new Error("Failed to retrieve questions");
+  }
 };
 
 module.exports = {

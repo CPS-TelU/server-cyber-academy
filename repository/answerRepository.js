@@ -22,14 +22,14 @@ const createAnswer = async (answerData) => {
 
 const updateAnswer = async (id, answer) => {
   return await prisma.answer.update({
-    where: { id: parseInt(id) },
+    where: { id: String(id) },
     data: answer,
   });
 };
 const findAnswerByQuestionId = async (question_id) => {
   return await prisma.answer.findMany({
     where: {
-      question_id: question_id,
+      question_id: String(question_id),
     },
   });
 };

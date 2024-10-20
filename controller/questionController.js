@@ -99,8 +99,8 @@ const getQuestionById = async (req, res) => {
 };
 const getQuestionsByTopicId = async (req, res) => {
   try {
-    const { topicId } = req.params;
-    const questions = await questionService.getQuestionsByTopicId(topicId);
+    const { topic_id } = req.params;
+    const questions = await questionService.getQuestionsByTopicId(topic_id);
     res.status(200).json({
       success: true,
       message: "Questions retrieved successfully",
@@ -118,7 +118,7 @@ const getQuestionsByTopicId = async (req, res) => {
 const deleteQuestion = async (req, res) => {
   try {
     const { id } = req.params;
-    await questionService.deletedQuestion(id);
+    await questionService.deleteQuestion(id);
     res.status(200).json({
       success: true,
       message: "Question deleted successfully",

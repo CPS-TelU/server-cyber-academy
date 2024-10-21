@@ -72,14 +72,6 @@ app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 // Server and Socket.io setup
 const server = http.createServer(app);
 const io = new SocketServer(server, {

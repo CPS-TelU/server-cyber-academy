@@ -19,6 +19,8 @@ const createAnswer = async (req, res) => {
       user_id,
       question_id
     );
+    const io = req.app.get("io");
+    io.emit(`new-answer-${question_id}`, answer);
     return res.status(201).json({
       success: true,
       message: "Answer created successfully",
@@ -37,6 +39,8 @@ const updateAnswer = async (req, res) => {
     const { messages } = req.body;
     const file = req.file;
     const updateAnswer = await answerService.updateAnswer(id, messages, file);
+    const io = req.app.get("io");
+    io.emit(`update-answer-${id}`, updateAnswer);
     res.status(200).json({
       success: true,
       message: "Answer updated successfully",
@@ -54,6 +58,8 @@ const updateAnswer = async (req, res) => {
 const getAnswers = async (req, res) => {
   try {
     const answers = await answerService.getAnswers();
+    const io = req.app.get("io");
+    io.emit("Answers retrieved successfully", answers);
     res.status(200).json({
       success: true,
       message: "Answers retrieved successfully",

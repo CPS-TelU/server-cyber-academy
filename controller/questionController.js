@@ -19,6 +19,8 @@ const createQuestion = async (req, res) => {
       user_id,
       topic_id
     );
+    const io = req.app.get("io");
+    io.emit(`new-question-${topic_id}`, question);
     return res.status(201).json({
       success: true,
       message: "Question created successfully",
@@ -42,6 +44,8 @@ const updateQuestion = async (req, res) => {
       messages,
       file
     );
+    const io = req.app.get("io");
+    io.emit(`update-question-${id}`, updatedQuestion);
     res.status(200).json({
       success: true,
       message: "Question updated successfully",
@@ -58,6 +62,8 @@ const updateQuestion = async (req, res) => {
 const getQuestions = async (req, res) => {
   try {
     const questions = await questionService.getQuestions();
+    const io = req.app.get("io");
+    io.emit("new-question", questions);
     res.status(200).json({
       success: true,
       message: "Questions retrieved successfully",
@@ -127,6 +133,8 @@ const deleteQuestion = async (req, res) => {
   try {
     const { id } = req.params;
     await questionService.deleteQuestion(id);
+    const io = req.app.get("io");
+    io.emit("Question successfully deleted", id);
     res.status(200).json({
       success: true,
       message: "Question deleted successfully",

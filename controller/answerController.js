@@ -3,7 +3,7 @@ const createAnswer = async (req, res) => {
   try {
     const { messages, question_id, user_id } = req.body;
     const file = req.file;
-    //untuk debugging API
+    // Debugging
     console.log("Message: ", messages);
     console.log("User_id: ", user_id);
     console.log("Question_id: ", question_id);
@@ -19,8 +19,12 @@ const createAnswer = async (req, res) => {
       user_id,
       question_id
     );
-    const io = req.app.get("io");
-    io.emit(`new-answer-${question_id}`, answer);
+    // Emit to socket.io if available
+    if (req.io) {
+      req.io.emit(`new-answer-${question_id}`, answer);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     return res.status(201).json({
       success: true,
       message: "Answer created successfully",
@@ -33,21 +37,25 @@ const createAnswer = async (req, res) => {
       .json({ success: false, message: "Failed to create answer" });
   }
 };
+
 const updateAnswer = async (req, res) => {
   try {
     const { id } = req.params;
     const { messages } = req.body;
     const file = req.file;
-    const updateAnswer = await answerService.updateAnswer(id, messages, file);
-    const io = req.app.get("io");
-    io.emit(`update-answer-${id}`, updateAnswer);
+    const updatedAnswer = await answerService.updateAnswer(id, messages, file);
+    if (req.io) {
+      req.io.emit(`update-answer-${id}`, updatedAnswer);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Answer updated successfully",
-      data: updateAnswer,
+      data: updatedAnswer,
     });
   } catch (error) {
-    console.error("Error in updatedAnswer: ", error);
+    console.error("Error in updateAnswer: ", error);
     res.status(500).json({
       success: false,
       message: "Failed to update answer",
@@ -55,11 +63,10 @@ const updateAnswer = async (req, res) => {
     });
   }
 };
+
 const getAnswers = async (req, res) => {
   try {
     const answers = await answerService.getAnswers();
-    const io = req.app.get("io");
-    io.emit("Answers retrieved successfully", answers);
     res.status(200).json({
       success: true,
       message: "Answers retrieved successfully",
@@ -74,6 +81,7 @@ const getAnswers = async (req, res) => {
     });
   }
 };
+
 const findAnswerByQuestionId = async (req, res) => {
   try {
     const { question_id } = req.params;

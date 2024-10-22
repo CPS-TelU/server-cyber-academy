@@ -67,6 +67,11 @@ const updateAnswer = async (req, res) => {
 const getAnswers = async (req, res) => {
   try {
     const answers = await answerService.getAnswers();
+    if (req.io) {
+      req.io.emit(`update-answer-${id}`, updatedAnswer);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Answers retrieved successfully",
@@ -86,6 +91,11 @@ const findAnswerByQuestionId = async (req, res) => {
   try {
     const { question_id } = req.params;
     const answer = await answerService.findAnswerByQuestionId(question_id);
+    if (req.io) {
+      req.io.emit(`update-answer-${id}`, updatedAnswer);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Answer retrieved successfully",

@@ -70,8 +70,17 @@ app.use("/discussion", answerRoutes);
 // Server and Socket.io setup
 const server = http.createServer(app);
 const io = new SocketServer(server, {
-  cors: corsOptions,
+  cors: {
+    origin: corsOptions.origin,
+    methods: corsOptions.methods,
+    credentials: corsOptions.credentials,
+    allowedHeaders: corsOptions.allowedHeaders,
+  },
+  transports: ["websocket", "polling"], // Prioritize websocket transport
 });
+
+// Attach io to the app for global access
+app.set("io", io);
 
 // Attach io to the request object for all incoming requests
 app.use((req, res, next) => {
@@ -84,11 +93,11 @@ io.on("connection", (socket) => {
   console.log("A user connected");
 
   socket.on("newQuestion", (questionData) => {
-    io.emit("questionBroadcast", questionData);
+    socket.broadcast.emit("questionBroadcast", questionData);
   });
 
   socket.on("newAnswer", (answerData) => {
-    io.emit("answerBroadcast", answerData);
+    socket.broadcast.emit("answerBroadcast", answerData);
   });
 
   socket.on("disconnect", () => {

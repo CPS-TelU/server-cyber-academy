@@ -3,7 +3,7 @@ const createQuestion = async (req, res) => {
   try {
     const { messages, topic_id, user_id } = req.body;
     const file = req.file;
-    //debugging API
+    // Debugging API
     console.log("Message: ", messages);
     console.log("User ID: ", user_id);
     console.log("Topic ID: ", topic_id);
@@ -19,13 +19,18 @@ const createQuestion = async (req, res) => {
       user_id,
       topic_id
     );
-    req.io.emit(`new-question-${topic_id}`, question);
+    if (req.io) {
+      req.io.emit(`new-question-${topic_id}`, question);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     return res.status(201).json({
       success: true,
       message: "Question created successfully",
       data: question,
     });
   } catch (error) {
+    console.error("Error in createQuestion: ", error);
     res.status(500).json({
       success: false,
       message: "Failed to create question",
@@ -43,13 +48,18 @@ const updateQuestion = async (req, res) => {
       messages,
       file
     );
-    req.io.emit(`update-question-${id}`, updatedQuestion);
+    if (req.io) {
+      req.io.emit(`update-question-${id}`, updatedQuestion);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Question updated successfully",
       data: updatedQuestion,
     });
   } catch (error) {
+    console.error("Error in updateQuestion: ", error);
     res.status(500).json({
       success: false,
       message: "Failed to update question",
@@ -57,10 +67,10 @@ const updateQuestion = async (req, res) => {
     });
   }
 };
+
 const getQuestions = async (req, res) => {
   try {
     const questions = await questionService.getQuestions();
-    req.io.emit("new-question", questions);
     res.status(200).json({
       success: true,
       message: "Questions retrieved successfully",
@@ -75,6 +85,7 @@ const getQuestions = async (req, res) => {
     });
   }
 };
+
 const getQuestionById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -86,7 +97,11 @@ const getQuestionById = async (req, res) => {
         message: "Question not found",
       });
     }
-    req.io.emit(`update-question-${id}`, question);
+    if (req.io) {
+      req.io.emit(`update-question-${id}`, question);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Question retrieved successfully",
@@ -101,6 +116,7 @@ const getQuestionById = async (req, res) => {
     });
   }
 };
+
 const getQuestionsByTopicId = async (req, res) => {
   try {
     const { topic_id } = req.params;
@@ -112,7 +128,11 @@ const getQuestionsByTopicId = async (req, res) => {
       });
     }
     const questions = await questionService.getQuestionsByTopicId(topic_id);
-    req.io.emit(`new-question-${topic_id}`, questions);
+    if (req.io) {
+      req.io.emit(`new-question-${topic_id}`, questions);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Questions retrieved successfully",
@@ -132,13 +152,17 @@ const deleteQuestion = async (req, res) => {
   try {
     const { id } = req.params;
     await questionService.deleteQuestion(id);
-    const io = req.app.get("io");
-    io.emit("Question successfully deleted", id);
+    if (req.io) {
+      req.io.emit("Question successfully deleted", id);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Question deleted successfully",
     });
   } catch (error) {
+    console.error("Error in deleteQuestion: ", error);
     res.status(500).json({
       success: false,
       message: "Failed to delete question",
@@ -146,6 +170,7 @@ const deleteQuestion = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   createQuestion,
   updateQuestion,

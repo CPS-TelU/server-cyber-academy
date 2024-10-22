@@ -71,6 +71,11 @@ const updateQuestion = async (req, res) => {
 const getQuestions = async (req, res) => {
   try {
     const questions = await questionService.getQuestions();
+    if (req.io) {
+      req.io.emit(`update-answer-${id}`, updatedAnswer);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Questions retrieved successfully",

@@ -43,8 +43,7 @@ const updateQuestion = async (req, res) => {
       messages,
       file
     );
-    const io = req.app.get("io");
-    io.emit(`update-question-${id}`, updatedQuestion);
+    req.io.emit(`update-question-${id}`, updatedQuestion);
     res.status(200).json({
       success: true,
       message: "Question updated successfully",
@@ -61,8 +60,7 @@ const updateQuestion = async (req, res) => {
 const getQuestions = async (req, res) => {
   try {
     const questions = await questionService.getQuestions();
-    const io = req.app.get("io");
-    io.emit("new-question", questions);
+    req.io.emit("new-question", questions);
     res.status(200).json({
       success: true,
       message: "Questions retrieved successfully",
@@ -88,6 +86,7 @@ const getQuestionById = async (req, res) => {
         message: "Question not found",
       });
     }
+    req.io.emit(`update-question-${id}`, question);
     res.status(200).json({
       success: true,
       message: "Question retrieved successfully",
@@ -113,6 +112,7 @@ const getQuestionsByTopicId = async (req, res) => {
       });
     }
     const questions = await questionService.getQuestionsByTopicId(topic_id);
+    req.io.emit(`new-question-${topic_id}`, questions);
     res.status(200).json({
       success: true,
       message: "Questions retrieved successfully",

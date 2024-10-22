@@ -75,8 +75,8 @@ const io = new SocketServer(server, {
     methods: corsOptions.methods,
     credentials: corsOptions.credentials,
     allowedHeaders: corsOptions.allowedHeaders,
+    transports: ["websocket", "polling"], // Prioritize websocket transport
   },
-  transports: ["websocket", "polling"], // Prioritize websocket transport
 });
 
 // Attach io to the app for global access
@@ -92,12 +92,12 @@ app.use((req, res, next) => {
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  socket.on("newQuestion", (questionData) => {
-    socket.broadcast.emit("questionBroadcast", questionData);
+  socket.on("newQuestion", (question) => {
+    socket.broadcast.emit("questionBroadcast", question);
   });
 
-  socket.on("newAnswer", (answerData) => {
-    socket.broadcast.emit("answerBroadcast", answerData);
+  socket.on("newAnswer", (answer) => {
+    socket.broadcast.emit("answerBroadcast", answer);
   });
 
   socket.on("disconnect", () => {

@@ -19,8 +19,7 @@ const createQuestion = async (req, res) => {
       user_id,
       topic_id
     );
-    const io = req.app.get("io");
-    io.emit(`new-question-${topic_id}`, question);
+    req.io.emit(`new-question-${topic_id}`, question);
     return res.status(201).json({
       success: true,
       message: "Question created successfully",

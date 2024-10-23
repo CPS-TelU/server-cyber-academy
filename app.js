@@ -4,7 +4,6 @@ const http = require("http");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const { Server: SocketServer } = require("socket.io");
-const methodOverride = require('method-override');
 
 const topicRoutes = require("./routes/topicRoutes.js");
 const certificateRoutes = require("./routes/certificateRoutes");
@@ -18,11 +17,11 @@ const adminCmsRoutes = require("./routes/adminCmsRoutes");
 const adminRoutes = require("./routes/adminroutes.js");
 const userRoutes = require("./routes/userRoutes.js");
 const taskRoutes = require("./routes/taskRoutes");
-
 require("dotenv").config();
 
 const app = express();
 
+// CORS options
 let corsOptions = {
   origin: [
     "http://localhost:3000",
@@ -31,38 +30,36 @@ let corsOptions = {
     "https://be-cyber-academy-git-main-adamwisnups-projects.vercel.app",
     "https://be-cyber-academy-7wkpnj4ck-adamwisnups-projects.vercel.app",
     "https://fe-cyberacademy2024.vercel.app",
+    "https://cyberacademy2024.vercel.app",
+    "https://ca.cpslaboratory.com",
+    "https://cyberacademy.cpslaboratory.com",
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
+// Middleware setup
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(expressLayouts);
 app.set("layout", "layout");
-app.use(methodOverride('_method'));
-app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.io = io; // Attach io to the request object
-  next();
-});
-
+// Base route
 app.get("/", (req, res) => {
   res.send("CPS API!");
 });
 
+// API routes
 app.use("/api/auth", userAuthRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/cms", adminCmsRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api", moduleRoutes);
-
-// by Mitchel
 app.use("/api/moduls", moduleRoutes);
 app.use("/api/certificate", certificateRoutes);
 app.use("/api/groups", groupRoutes);
@@ -74,29 +71,37 @@ app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 // Server and Socket.io setup
 const server = http.createServer(app);
 const io = new SocketServer(server, {
-  cors: corsOptions,
+  cors: {
+    origin: corsOptions.origin,
+    methods: corsOptions.methods,
+    credentials: corsOptions.credentials,
+    allowedHeaders: corsOptions.allowedHeaders,
+    transports: ["websocket", "polling"], // Prioritize websocket transport
+  },
+});
+
+// Attach io to the app for global access
+app.set("io", io);
+
+// Attach io to the request object for all incoming requests
+app.use((req, res, next) => {
+  req.io = io; // Attach io to the request object
+  next();
 });
 
 // Socket.io connections
 io.on("connection", (socket) => {
   console.log("A user connected");
-  socket.on("newQuestion", (questionData) => {
-    io.emit("questionBroadcast", questionData);
+
+  socket.on("newQuestion", (question) => {
+    socket.broadcast.emit("questionBroadcast", question);
   });
 
-  socket.on("newAnswer", (answerData) => {
-    io.emit("answerBroadcast", answerData);
+  socket.on("newAnswer", (answer) => {
+    socket.broadcast.emit("answerBroadcast", answer);
   });
 
   socket.on("disconnect", () => {
@@ -104,5 +109,5 @@ io.on("connection", (socket) => {
   });
 });
 
-// Export app and server correctly
-(module.exports = app), server;
+// Export server for starting the application
+module.exports = server;

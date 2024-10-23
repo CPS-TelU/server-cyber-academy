@@ -1,13 +1,12 @@
 const answerService = require("../services/answerService.js");
 const createAnswer = async (req, res) => {
   try {
-    const { messages, question_id } = req.body;
+    const { messages, question_id, user_id } = req.body;
     const file = req.file;
-    const user_id = req.user?.id;
-    //untuk debugging API
+    // Debugging
     console.log("Message: ", messages);
-    console.log("User ID: ", user_id);
-    console.log("Question ID: ", question_id);
+    console.log("User_id: ", user_id);
+    console.log("Question_id: ", question_id);
     console.log("File: ", file);
     if (!messages || !user_id || !question_id) {
       return res
@@ -20,6 +19,12 @@ const createAnswer = async (req, res) => {
       user_id,
       question_id
     );
+    // Emit to socket.io if available
+    if (req.io) {
+      req.io.emit(`new-answer-${question_id}`, answer);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     return res.status(201).json({
       success: true,
       message: "Answer created successfully",
@@ -32,19 +37,25 @@ const createAnswer = async (req, res) => {
       .json({ success: false, message: "Failed to create answer" });
   }
 };
-const updatedAnswer = async (req, res) => {
+
+const updateAnswer = async (req, res) => {
   try {
     const { id } = req.params;
     const { messages } = req.body;
     const file = req.file;
-    const updatedAnswer = await answerService.updatedAnswer(id, messages, file);
+    const updatedAnswer = await answerService.updateAnswer(id, messages, file);
+    if (req.io) {
+      req.io.emit(`update-answer-${id}`, updatedAnswer);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Answer updated successfully",
       data: updatedAnswer,
     });
   } catch (error) {
-    console.error("Error in updatedAnswer: ", error);
+    console.error("Error in updateAnswer: ", error);
     res.status(500).json({
       success: false,
       message: "Failed to update answer",
@@ -52,9 +63,15 @@ const updatedAnswer = async (req, res) => {
     });
   }
 };
+
 const getAnswers = async (req, res) => {
   try {
     const answers = await answerService.getAnswers();
+    if (req.io) {
+      req.io.emit(`update-answer-${id}`, updatedAnswer);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Answers retrieved successfully",
@@ -69,10 +86,16 @@ const getAnswers = async (req, res) => {
     });
   }
 };
+
 const findAnswerByQuestionId = async (req, res) => {
   try {
     const { question_id } = req.params;
     const answer = await answerService.findAnswerByQuestionId(question_id);
+    if (req.io) {
+      req.io.emit(`update-answer-${id}`, updatedAnswer);
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
     res.status(200).json({
       success: true,
       message: "Answer retrieved successfully",
@@ -90,7 +113,7 @@ const findAnswerByQuestionId = async (req, res) => {
 
 module.exports = {
   createAnswer,
-  updatedAnswer,
+  updateAnswer,
   getAnswers,
   findAnswerByQuestionId,
 };

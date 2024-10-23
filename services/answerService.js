@@ -25,13 +25,9 @@ const createAnswer = async (messages, file, user_id, question_id) => {
   }
 };
 
-const updatedAnswer = async (id, messages, file) => {
+const updateAnswer = async (id, messages, file) => {
   try {
-    const existingAnswer = await answerRepository.findAnswerById(id);
-    if (!existingAnswer) {
-      throw new Error("Answer not found");
-    }
-    let imageUrl = existingAnswer.image;
+    let imageUrl = updateAnswer.image;
     if (file) {
       const imageUpload = await imagekit.upload({
         file: file.buffer,
@@ -71,7 +67,7 @@ const getAnswers = async () => {
 
 module.exports = {
   createAnswer,
-  updatedAnswer,
+  updateAnswer,
   findAnswerByQuestionId,
   getAnswers,
 };

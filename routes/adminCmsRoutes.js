@@ -25,7 +25,7 @@ router.get('/submission', async (req, res) => {
     // Mengirimkan data sertifikat ke view EJS
     res.render('submission', { 
       submissionList: submissions,
-      title: 'Submission Upload' 
+      title: 'Submission Upload',
     });
   } catch (error) {
     console.error('Error fetching certificates:', error);
@@ -70,11 +70,53 @@ router.get('/tasks/add', (req, res) => {
     });
 });
 
-router.get('/tasks/edit', (req, res) => {
-    res.render('editTask', {
-        title: 'Edit Task'
+// routes/taskRoutes.js
+router.get('/tasks/edit/:id', async (req, res) => {
+  try {
+    const taskId = parseInt(req.params.id, 10); // Mengambil id dari URL
+    const task = await prisma.task.findUnique({
+      where: { id: taskId },
     });
+
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    // Render halaman edit dengan data task yang sudah diisi
+    res.render('editTask', { 
+      title: 'Edit Task',
+      task: task,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching task' });
+  }
 });
+
+// Route untuk mengedit task berdasarkan ID
+router.put('/tasks/update/:id', async (req, res) => {
+  const { id } = req.params; // Ambil ID task dari URL
+  const { title, module, openedAt, closedAt, description } = req.body; // Ambil data dari form
+
+  try {
+    // Update task di database menggunakan Prisma
+    const updatedTask = await prisma.task.update({
+      where: { id: Number(id) },
+      data: {
+        title,
+        module,
+        opened_at: new Date(openedAt),  // pastikan format tanggal sesuai
+        closed_at: new Date(closedAt),
+        description,
+      },
+    });
+    res.status(200).json({ message: 'Task updated successfully', task: updatedTask });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating task', error });
+  }
+});
+
+
 
 router.get('/module/add', (req, res) => {
   res.render('addModule', {

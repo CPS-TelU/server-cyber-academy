@@ -1,10 +1,10 @@
 const taskService = require('../services/taskService');
 
-const postTask = (req, res) => {
+const postTask = async (req, res) => {
     const { title, description } = req.body;
 
     try {
-        const newTask = taskService.addTask(title, description);
+        const newTask = await taskService.addTask({ title, description });
         return res.status(201).json({
             message: "Task added successfully",
             task: newTask,
@@ -16,9 +16,9 @@ const postTask = (req, res) => {
     }
 };
 
-const getTasks = (req, res) => {
+const getTasks = async (req, res) => {
     try {
-        const allTasks = taskService.getAllTasks();
+        const allTasks = await taskService.getAllTasks();
         return res.status(200).json({
             tasks: allTasks,
         });
@@ -29,11 +29,11 @@ const getTasks = (req, res) => {
     }
 };
 
-const getTask = (req, res) => {
+const getTaskByIdController = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const task = taskService.getTaskById(Number(id));
+        const task = await taskService.getTaskById(Number(id));
         return res.status(200).json({
             task: task,
         });
@@ -46,23 +46,20 @@ const getTask = (req, res) => {
 
 const getTaskPage = async (req, res) => {
     try {
-      // Ambil data task dari service
-      const tasks = await taskService.getTaskList();
-  
-      // Render ke halaman tasks.ejs
-      res.render('tasks', { 
-        taskList: tasks,
-        title: 'Task Upload' 
-      });
+        const tasks = await taskService.getAllTasks();
+        res.render('tasks', { 
+            taskList: tasks,
+            title: 'Task Upload' 
+        });
     } catch (error) {
-      console.error('Error fetching tasks:', error);
-      res.status(500).send('Server Error');
+        console.error('Error fetching tasks:', error);
+        res.status(500).send('Server Error');
     }
-  };
+};
 
 module.exports = {
     postTask,
     getTasks,
-    getTask,
+    getTaskByIdController,
     getTaskPage,
 };

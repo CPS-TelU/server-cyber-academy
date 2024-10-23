@@ -1,8 +1,6 @@
 const taskRepository = require('../repository/taskRepository');
 
-let tasks = [];
-
-const addTask = (title, description) => {
+async function addTask({ title, description }) {
     if (!title || typeof title !== 'string') {
         throw new Error('Invalid title');
     }
@@ -11,36 +9,28 @@ const addTask = (title, description) => {
     }
 
     const newTask = { 
-        id: tasks.length + 1, // Assign an ID to each task
         title, 
         description, 
         status: 'pending' // Default status
     };
 
-    tasks.push(newTask);
-    return newTask;
-};
+    return await taskRepository.createTask(newTask); // Assuming you have a createTask method in the repository
+}
 
-const getAllTasks = () => {
-    return tasks;
-};
+async function getAllTasks() {
+    return await taskRepository.findAllTasks();
+}
 
-const getTaskById = (id) => {
-    const task = tasks.find(task => task.id === id);
+async function getTaskById(id) {
+    const task = await taskRepository.findTaskById(id); // Assuming you have a findTaskById method in the repository
     if (!task) {
         throw new Error('Task not found');
     }
     return task;
-};
-
-const getTaskList = async () => {
-    const tasks = await taskRepository.findAllTasks();
-    return tasks;
-  };
+}
 
 module.exports = {
     addTask,
     getAllTasks,
     getTaskById,
-    getTaskList
 };

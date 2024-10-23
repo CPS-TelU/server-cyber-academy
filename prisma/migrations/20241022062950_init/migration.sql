@@ -11,7 +11,7 @@ CREATE TABLE "users" (
     "major" TEXT NOT NULL,
     "faculty" TEXT NOT NULL,
     "document" TEXT NOT NULL,
-    "github" TEXT NOT NULL,
+    "github" TEXT,
     "year" TEXT NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
@@ -109,9 +109,13 @@ CREATE TABLE "groups" (
 -- CreateTable
 CREATE TABLE "tasks" (
     "id" SERIAL NOT NULL,
-    "taskName" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "group_id" INTEGER NOT NULL,
+    "opened_at" TIMESTAMP(6) NOT NULL,
+    "title" TEXT NOT NULL,
+    "group_id" INTEGER,
+    "closed_at" TIMESTAMP(6),
+    "module" VARCHAR,
+    "description" TEXT,
+    "file" TEXT,
 
     CONSTRAINT "tasks_pkey" PRIMARY KEY ("id")
 );
@@ -165,4 +169,4 @@ ALTER TABLE "answers" ADD CONSTRAINT "answers_user_id_fkey" FOREIGN KEY ("user_i
 ALTER TABLE "groups" ADD CONSTRAINT "groups_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tasks" ADD CONSTRAINT "tasks_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tasks" ADD CONSTRAINT "tasks_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -4,6 +4,7 @@ const http = require("http");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const { Server: SocketServer } = require("socket.io");
+const methodOverride = require('method-override');
 
 const topicRoutes = require("./routes/topicRoutes.js");
 const certificateRoutes = require("./routes/certificateRoutes");
@@ -16,6 +17,7 @@ const userAuthRoutes = require("./routes/userAuthRoutes.js");
 const adminCmsRoutes = require("./routes/adminCmsRoutes");
 const adminRoutes = require("./routes/adminroutes.js");
 const userRoutes = require("./routes/userRoutes.js");
+const taskRoutes = require("./routes/taskRoutes");
 
 require("dotenv").config();
 
@@ -42,6 +44,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(expressLayouts);
 app.set("layout", "layout");
+app.use(methodOverride('_method'));
+app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   req.io = io; // Attach io to the request object
@@ -63,6 +67,7 @@ app.use("/api/moduls", moduleRoutes);
 app.use("/api/certificate", certificateRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/submissions", submissionRoutes);
+app.use("/api", taskRoutes);
 
 // Routes
 app.use("/discussion", topicRoutes);

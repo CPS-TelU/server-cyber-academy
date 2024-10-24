@@ -16,6 +16,7 @@ const userAuthRoutes = require("./routes/userAuthRoutes.js");
 const adminCmsRoutes = require("./routes/adminCmsRoutes");
 const adminRoutes = require("./routes/adminroutes.js");
 const userRoutes = require("./routes/userRoutes.js");
+const taskRoutes = require("./routes/taskRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -63,6 +64,9 @@ app.use("/api/moduls", moduleRoutes);
 app.use("/api/certificate", certificateRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/submissions", submissionRoutes);
+app.use("/api", taskRoutes);
+
+// Routes
 app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);

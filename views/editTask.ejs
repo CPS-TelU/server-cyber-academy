@@ -1,45 +1,58 @@
-<!-- views/addTask.ejs -->
-<div class="container my-5">
-    <div class="row">
-        <div class="col-12">
-            <!-- <h3 class="mb-4">Add Task</h3> -->
-            <form action="#" method="POST" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" required>
-                </div>
+<form id="editTaskForm" action="/cms/tasks/update/<%= task.id %>" method="POST">
+    <input type="hidden" name="_method" value="PUT"> <!-- Method override untuk PUT -->
 
-                <div class="mb-3">
-                    <label for="module" class="form-label">Module</label>
-                    <input type="text" class="form-control" id="module" name="module" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="openedAt" class="form-label">Opened</label>
-                    <input type="date" class="form-control" id="openedAt" name="openedAt" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="closedAt" class="form-label">Closed</label>
-                    <input type="date" class="form-control" id="closedAt" name="closedAt" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label for="file" class="form-label">Task File</label>
-                    <input type="file" class="form-control" id="file" name="file" required>
-                </div>
-
-                <div class="d-flex justify-content-end">
-                    <!-- <button type="button" class="btn btn-danger me-2">Cancel</button> -->
-                    <a href="/cms/tasks" class="btn btn-danger me-2">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-        </div>
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" value="<%= task.title %>" required>
     </div>
-</div>
+
+    <div class="mb-3">
+        <label for="module" class="form-label">Module</label>
+        <input type="text" class="form-control" id="module" name="module" value="<%= task.module %>" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="openedAt" class="form-label">Opened</label>
+        <input type="date" class="form-control" id="openedAt" name="openedAt" value="<%= task.opened_at.toISOString().split('T')[0] %>" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="closedAt" class="form-label">Closed</label>
+        <input type="date" class="form-control" id="closedAt" name="closedAt" value="<%= task.closed_at.toISOString().split('T')[0] %>" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="4" required><%= task.description %></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+<script>
+    document.getElementById('editTaskForm').addEventListener('submit', async (event) => {
+        event.preventDefault(); // Mencegah submit default form
+        console.log('Form submission prevented');
+
+        const formData = new FormData(event.target); // Mengambil data dari form
+        const taskId = '<%= task.id %>'; // Mendapatkan task ID dari server-side rendering
+        console.log('Task ID:', taskId);
+
+        try {
+            const response = await fetch(`/cms/tasks/update/${taskId}`, {
+                method: 'PUT',
+                body: formData,
+            });
+            console.log('Request sent to server');
+
+            if (response.ok) {
+                console.log('Task updated successfully');
+                window.location.href = '/cms/tasks'; // Redirect setelah update berhasil
+            } else {
+                console.error('Error updating task:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+</script>

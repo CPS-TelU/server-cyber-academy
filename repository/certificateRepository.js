@@ -31,10 +31,23 @@ const deleteCertificate = async (id) => {
     });
 };
 
+const getCertificateByUserId = async (userId) => {
+    try {
+        const certificates = await prisma.certification.findMany({
+            where: { user_id: userId },
+            include: { admin: true, user: true }, // Include relations as needed
+        });
+        return certificates;
+    } catch (error) {
+        throw new Error('Error fetching certificates');
+    }
+};
+
 module.exports = {
     getAllCertificates,
     getCertificateById,
     createCertificate,
     updateCertificate,
-    deleteCertificate
+    deleteCertificate,
+    getCertificateByUserId
 };

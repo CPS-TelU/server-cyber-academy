@@ -17,6 +17,7 @@ const adminCmsRoutes = require("./routes/adminCmsRoutes");
 const adminRoutes = require("./routes/adminroutes.js");
 const userRoutes = require("./routes/userRoutes.js");
 const taskRoutes = require("./routes/taskRoutes");
+const discussionRoutes = require("./routes/discussionRoutes.js");
 require("dotenv").config();
 
 const app = express();
@@ -65,6 +66,7 @@ app.use("/api/certificate", certificateRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api", taskRoutes);
+app.use("/api/discussion", discussionRoutes);
 
 // Routes
 app.use("/discussion", topicRoutes);
@@ -109,5 +111,4 @@ io.on("connection", (socket) => {
   });
 });
 
-// Export server for starting the application
-module.exports = server;
+module.exports = { server, io };

@@ -40,8 +40,8 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-    "nim" : "1101213133",
-    "password" : "1101213133ca2024"
+    "nim" : "1103223053",
+    "password" : "1103223053ca2024"
 }
 
 ### login Prod
@@ -73,4 +73,20 @@ Content-Type: application/json
 
 {
     "email": "maucuan429@gmail.com"
+}
+
+### getAll Question in discussion
+GET http://localhost:3000/api/discussion?topicId=5e2650f6-0486-47a2-ac8e-c682bf3f34a2
+Content-Type: application/json
+
+### create Question in discussion
+POST http://localhost:3000/api/discussion
+
+### create Ansewer in discussion
+POST http://localhost:3000/api/discussion/answers
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IkF0aGFsYWggUmFmaWYgSXJzeWFjaCBTYXJicmFuaSIsImlhdCI6MTcyOTc4MTUyMywiZXhwIjoxNzMwMzg2MzIzfQ.UXt5euMxGk9vc_qa9zCYSN2ePjv3IH0Fq39wO1qYZLw
+{
+    "question_id": "f41f327c-4cc1-4cee-ac74-7c61d137cd80",
+    "messages": "Internet of things merupakan sebuah konsep di mana suatu benda atau objek ditanamkan teknologi-teknologi seperti sensor dan software dengan tujuan untuk berkomunikasi, mengendalikan, menghubungkan, dan bertukar data melalui perangkat lain selama masih terhubung ke internet."
 }

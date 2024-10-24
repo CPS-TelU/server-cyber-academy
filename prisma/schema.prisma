@@ -127,8 +127,7 @@ model Answer {
 model Group {
   id          Int          @id @default(autoincrement())
   groupName   String
-  user_id     Int
-  User        User         @relation(fields: [user_id], references: [id])
+  users       User[]
   tasks       Task[] // One-to-many relationship with Task
   submissions Submission[] // Add this field to link Group to Submission
 
@@ -137,10 +136,15 @@ model Group {
 
 model Task {
   id          Int          @id @default(autoincrement())
-  taskName    String
-  description String
-  group_id    Int // Foreign key to Group
-  group       Group        @relation(fields: [group_id], references: [id]) // Define the relation to Group
+  opened_at   DateTime     @db.Timestamp(6)
+  title       String
+  group_id    Int?         // This field is optional
+  closed_at   DateTime?    @db.Timestamp(6)
+  module      String?      @db.VarChar
+  description String?
+  file        String?
+
+  group       Group?       @relation(fields: [group_id], references: [id]) // Make the relation optional
   submissions Submission[] // One-to-many relationship with Submission
 
   @@map("tasks")

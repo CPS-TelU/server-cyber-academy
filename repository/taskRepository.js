@@ -1,9 +1,19 @@
-const prisma = require("../config/db.js");
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-const findAllTasks = async () => {
-    return await prisma.task.findMany();
-  };
+class TaskRepository {
+    // Fetch all tasks
+    async findAllTasks() {
+        return await prisma.task.findMany();
+    }
 
-module.exports = {
-    findAllTasks,
-};
+    async findTaskById(id) {
+      return await prisma.task.findUnique({
+        where: {
+          id: id,
+        },
+      });
+    }
+}
+
+module.exports = new TaskRepository();

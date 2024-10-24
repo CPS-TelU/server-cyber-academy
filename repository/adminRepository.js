@@ -7,7 +7,7 @@ const uploadCertificate = async (grade, status, imageUrl, user_id) => {
             grade,
             status,
             image: imageUrl,
-            users: {
+            user: {
                 connect: {
                     id: user_id  // Pastikan userId adalah integer, bukan array
                 }
@@ -42,7 +42,7 @@ const uploadModule = async (name, fileUrl, opened_at) => {
     const result = await prisma.modul.create({
         data: {
             name,
-            link: fileUrl,
+            file: fileUrl,
             opened_at: new Date(opened_at).toISOString(),
             // user: {
             //     connect: {

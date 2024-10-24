@@ -49,10 +49,22 @@ const deleteCertificate = async (req, res) => {
     }
 };
 
+const getCertificateByUserIdController = async (req, res) => {
+    const userId = parseInt(req.params.userId, 10);
+    
+    try {
+        const certificates = await certificateService.fetchCertificateByUserId(userId);
+        return res.status(200).json({ success: true, data: certificates });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 module.exports = {
     getAllCertificates,
     getCertificateById,
     createCertificate,
     updateCertificate,
-    deleteCertificate
+    deleteCertificate,
+    getCertificateByUserIdController
 };

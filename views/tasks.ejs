@@ -42,7 +42,7 @@
             month: 'short', 
             day: 'numeric'
         }).replace(/,/g, '') %></td>
-            <td><a href="/cms/tasks/edit" class="btn btn-primary">Edit</a></td>
+            <td><a href="/cms/tasks/edit/<%= task.id %>" class="btn btn-primary">Edit</a></td>
           </tr>
         <% }) %>
       </tbody>

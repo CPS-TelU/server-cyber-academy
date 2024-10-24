@@ -10,8 +10,8 @@ const upload = multer({ storage });
 // Route untuk upload file
 router.post('/upload-modul', upload.single('file'), uploadFile);
 router.post('/upload-serti', upload.single('image'), uploadSerti);
-router.post('/upload-submission', upload.single('file'), uploadTask);
-// router.post('/register', registerAdminController);
+router.post('/upload-task', upload.single('file'), uploadTask);
+router.post('/register', registerAdminController);
 router.post('/login', loginAdminController);
 
 module.exports = router;

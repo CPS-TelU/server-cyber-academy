@@ -87,7 +87,7 @@ const createAnswerController = async (req, res) => {
       });
     }
 
-    io.emit("newAnswer", { question_id, answer });
+    req.io.emit("newAnswer", { question_id, answer });
 
     return res.status(201).json({
       success: true,

@@ -24,7 +24,7 @@ const getAllQuestions = async (topicId) => {
       include: {
         User: {
           select: {
-            name: true, // Hanya menampilkan name dari User pada Question
+            name: true,
           },
         },
         Topic: true,
@@ -32,7 +32,7 @@ const getAllQuestions = async (topicId) => {
           include: {
             User: {
               select: {
-                name: true, // Hanya menampilkan name dari User pada Answer
+                name: true,
               },
             },
           },
@@ -68,7 +68,11 @@ const createAnswer = async (answerData) => {
   const answer = await prisma.answer.create({
     data: answerData,
     include: {
-      User: true,
+      User: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 

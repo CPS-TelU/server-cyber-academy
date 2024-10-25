@@ -3,6 +3,9 @@ const prisma = require("../config/db");
 const createQuestion = async (questionData) => {
   const question = await prisma.question.create({
     data: questionData,
+    include: {
+      User: true,
+    },
   });
 
   return question;
@@ -34,6 +37,9 @@ const getAllQuestions = async (topicId) => {
 const createAnswer = async (answerData) => {
   const answer = await prisma.answer.create({
     data: answerData,
+    include: {
+      User: true,
+    },
   });
 
   return answer;

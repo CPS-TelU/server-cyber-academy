@@ -4,7 +4,11 @@ const createQuestion = async (questionData) => {
   const question = await prisma.question.create({
     data: questionData,
     include: {
-      User: true,
+      User: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 
@@ -12,21 +16,47 @@ const createQuestion = async (questionData) => {
 };
 
 const getAllQuestions = async (topicId) => {
+  let questions;
+
   if (topicId) {
     questions = await prisma.question.findMany({
       where: { topic_id: topicId },
       include: {
-        User: true,
+        User: {
+          select: {
+            name: true, // Hanya menampilkan name dari User pada Question
+          },
+        },
         Topic: true,
-        answers: true,
+        answers: {
+          include: {
+            User: {
+              select: {
+                name: true, // Hanya menampilkan name dari User pada Answer
+              },
+            },
+          },
+        },
       },
     });
   } else {
     questions = await prisma.question.findMany({
       include: {
-        User: true,
+        User: {
+          select: {
+            name: true,
+          },
+        },
         Topic: true,
-        answers: true,
+        answers: {
+          include: {
+            User: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
   }

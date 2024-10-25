@@ -40,7 +40,6 @@ let corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-// Middleware setup
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 app.set("view engine", "ejs");

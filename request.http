@@ -76,7 +76,8 @@ Content-Type: application/json
 }
 
 ### getAll Question in discussion
-GET http://localhost:3000/api/discussion?topicId=5e2650f6-0486-47a2-ac8e-c682bf3f34a2
+# GET http://localhost:3000/api/discussion?topicId=5e2650f6-0486-47a2-ac8e-c682bf3f34a2
+GET http://localhost:3000/api/discussion
 Content-Type: application/json
 
 ### create Question in discussion

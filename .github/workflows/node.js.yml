@@ -19,11 +19,11 @@ jobs:
         node-version: [20.18.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     env:
-      PORT: ${{secrets.PORT}}
-      IMAGEKIT_PUBLIC_KEY: ${{secrets.IMAGEKIT_PUBLIC_KEY}}
-      IMAGEKIT_PRIVATE_KEY: ${{secrets.IMAGEKIT_PRIVATE_KEY}}
-      IMAGEKIT_URL_ENDPOINT: ${{secrets.IMAGEKIT_URL_ENDPOINT}}
-      JWT_SECRET: ${{secrets.JWT_SECRET}}
+      PORT: ${{ secrets.PORT }}
+      IMAGEKIT_PUBLIC_KEY: ${{ secrets.IMAGEKIT_PUBLIC_KEY }}
+      IMAGEKIT_PRIVATE_KEY: ${{ secrets.IMAGEKIT_PRIVATE_KEY }}
+      IMAGEKIT_URL_ENDPOINT: ${{ secrets.IMAGEKIT_URL_ENDPOINT }}  
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
       DATABASE_URL: ${{secrets.DATABASE_URL}}
       GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
       GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}

@@ -51,7 +51,12 @@ app.set("layout", "layout");
 
 const server = http.createServer(app);
 const io = new SocketServer(server, {
-  cors: corsOptions,
+  cors: {
+    origin: corsOptions.origin,
+    methods: corsOptions.methods,
+    credentials: true,
+    allowedHeaders: corsOptions.allowedHeaders,
+  },
 });
 
 app.use((req, res, next) => {
@@ -63,6 +68,7 @@ app.get("/", (req, res) => {
   res.send("CPS API!");
 });
 
+// API routes
 app.use("/api/auth", userAuthRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/cms", adminCmsRoutes);
@@ -78,6 +84,7 @@ app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
 
+// Socket.IO connection handling
 io.on("connection", (socket) => {
   console.log("A user connected");
 

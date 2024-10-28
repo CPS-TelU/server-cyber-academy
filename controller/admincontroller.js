@@ -4,8 +4,18 @@ const { handleFileUpload, handleSertifUpload, handleTaskUpload, registerAdminSer
 
 const uploadFile = async (req, res) => {
     try {
+        const user_id = parseInt(req.body.user_id, 10);
         // Memanggil service untuk mengunggah file ke ImageKit
-        const fileData = await handleFileUpload(req.body.name, req.file, req.body.opened_at);
+        const file = req.files['file'] ? req.files['file'][0] : null;
+        const image = req.files['image'] ? req.files['image'][0] : null;
+
+        if (!file || !image) {
+            return res.status(400).json({ success: false, message: "File atau image tidak ada" });
+        }
+
+        const is_clicked = req.body.is_clicked === 'true';
+
+        const fileData = await handleFileUpload(req.body.name, file, user_id, req.body.status, req.body.description, image, req.body.available_at, is_clicked);
 
         // Mengembalikan respons dengan data file yang berhasil diunggah
         res.redirect('/cms/module');
@@ -56,8 +66,21 @@ const uploadSerti = async (req, res) => {
 
 const uploadTask = async (req, res) => {
     try {
+        const modul_id = parseInt(req.body.modul_id, 10);
+        const module = await prisma.modul.findUnique({
+            where: {
+                id: modul_id,
+            },
+        });
 
-        const fileData = await handleTaskUpload(req.body.title, req.body.module, req.body.openedAt, req.body.closedAt, req.body.description, req.file);
+        if (!module) {
+            // Jika user tidak ditemukan, kirimkan response error
+            return res.status(400).json({
+                success: false,
+                message: 'Module not found',
+            });
+        }
+        const fileData = await handleTaskUpload(req.body.title, modul_id, req.body.deadline, req.body.description, req.file);
 
         res.redirect('/cms/tasks');
     } catch (error) {

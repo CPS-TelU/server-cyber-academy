@@ -2,7 +2,7 @@ const modulRepository = require('../repository/modulRepository');
 
 class ModulService {
   async createModul(data) {
-    if (!data.name || !data.link || !data.admin_id || !data.user_id) {
+    if (!data.name || !data.link || !data.user_id) {
       throw new Error('Missing required fields');
     }
     return await modulRepository.createModul(data);

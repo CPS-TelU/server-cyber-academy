@@ -17,6 +17,7 @@ const adminCmsRoutes = require("./routes/adminCmsRoutes");
 const adminRoutes = require("./routes/adminroutes.js");
 const userRoutes = require("./routes/userRoutes.js");
 const taskRoutes = require("./routes/taskRoutes");
+const discussionRoutes = require("./routes/discussionRoutes.js");
 require("dotenv").config();
 
 const app = express();
@@ -39,7 +40,6 @@ let corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-// Middleware setup
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 app.set("view engine", "ejs");
@@ -49,7 +49,21 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(expressLayouts);
 app.set("layout", "layout");
 
-// Base route
+const server = http.createServer(app);
+const io = new SocketServer(server, {
+  cors: {
+    origin: corsOptions.origin,
+    methods: corsOptions.methods,
+    credentials: true,
+    allowedHeaders: corsOptions.allowedHeaders,
+  },
+});
+
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 app.get("/", (req, res) => {
   res.send("CPS API!");
 });
@@ -65,34 +79,12 @@ app.use("/api/certificate", certificateRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api", taskRoutes);
-
-// Routes
+app.use("/api/discussion", discussionRoutes);
 app.use("/discussion", topicRoutes);
 app.use("/discussion", questionRoutes);
 app.use("/discussion", answerRoutes);
 
-// Server and Socket.io setup
-const server = http.createServer(app);
-const io = new SocketServer(server, {
-  cors: {
-    origin: corsOptions.origin,
-    methods: corsOptions.methods,
-    credentials: corsOptions.credentials,
-    allowedHeaders: corsOptions.allowedHeaders,
-    transports: ["websocket", "polling"], // Prioritize websocket transport
-  },
-});
-
-// Attach io to the app for global access
-app.set("io", io);
-
-// Attach io to the request object for all incoming requests
-app.use((req, res, next) => {
-  req.io = io; // Attach io to the request object
-  next();
-});
-
-// Socket.io connections
+// Socket.IO connection handling
 io.on("connection", (socket) => {
   console.log("A user connected");
 
@@ -109,5 +101,4 @@ io.on("connection", (socket) => {
   });
 });
 
-// Export server for starting the application
-module.exports = server;
+module.exports = { server, io };

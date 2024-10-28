@@ -22,13 +22,15 @@ model User {
   document      String
   github        String?
   year          String
+  group_id      Int?            // Add this field for foreign key
+  group         Group?          @relation(fields: [group_id], references: [id])
   answer        Answer[]
   certification Certification[]
   modul         Modul[]
   questions     Question[]
   submission    Submission[]
   topics        Topic[]
-  groups        Group[]
+  // groups        Group[]
 
   @@map("users")
 }
@@ -39,37 +41,50 @@ model Admin {
   password      String
   name          String
   certification Certification[]
-  modul         Modul[]
-  submission    Submission[] // Use plural for consistency
 
   @@map("admins")
 }
 
+enum ModulStatus {
+  COMINGSOON
+  ONGOING
+  COMPLETED
+}
+
 model Modul {
-  id       Int     @id @default(autoincrement())
-  name     String
-  link     String
-  user_id  Int
-  admin_id Int
-  status   Boolean
-  admin    Admin   @relation(fields: [admin_id], references: [id])
-  user     User    @relation(fields: [user_id], references: [id])
+  id           Int          @id @default(autoincrement())
+  name         String
+  link         String
+  user_id      Int
+  status       ModulStatus  @default(COMINGSOON) // Enum status with default value
+  description  String       @db.VarChar      // New description field
+  image        String       @db.VarChar      // New image field
+  available_at DateTime     // New available_at field
+  is_clicked   Boolean      @default(false)  // New is_clicked field with default value
+
+  user         User         @relation(fields: [user_id], references: [id])
+  tasks        Task[]       // One-to-many relationship with Task
 
   @@map("moduls")
 }
 
+enum Status {
+  DONE
+  OPENED
+  CLOSED
+}
+
 model Submission {
-  id        Int     @id @default(autoincrement())
-  file      String
-  submitted Boolean @default(false)
-  group_id  Int
-  task_id   Int
-  user_id   Int
-  admin_id  Int
-  group     Group   @relation(fields: [group_id], references: [id])
-  task      Task    @relation(fields: [task_id], references: [id])
-  user      User    @relation(fields: [user_id], references: [id])
-  admin     Admin   @relation(fields: [admin_id], references: [id])
+  id           Int       @id @default(autoincrement())
+  file         String
+  submitted_at DateTime  @default(now())
+  group_id     Int
+  task_id      Int
+  user_id      Int
+  status       Status    @default(CLOSED) // Default status sebagai PENDING
+  group        Group     @relation(fields: [group_id], references: [id])
+  task         Task      @relation(fields: [task_id], references: [id])
+  user         User      @relation(fields: [user_id], references: [id])
 
   @@map("submisions")
 }
@@ -127,25 +142,22 @@ model Answer {
 model Group {
   id          Int          @id @default(autoincrement())
   groupName   String
-  users       User[]
-  tasks       Task[] // One-to-many relationship with Task
+  user        User[]
   submissions Submission[] // Add this field to link Group to Submission
 
   @@map("groups")
 }
 
 model Task {
-  id          Int          @id @default(autoincrement())
-  opened_at   DateTime     @db.Timestamp(6)
-  title       String
-  group_id    Int?         // This field is optional
-  closed_at   DateTime?    @db.Timestamp(6)
-  module      String?      @db.VarChar
-  description String?
-  file        String?
+  id           Int          @id @default(autoincrement())
+  title        String
+  modul_id     Int          // Foreign key to Modul
+  description  String
+  file         String
+  deadline     DateTime     // New deadline field
 
-  group       Group?       @relation(fields: [group_id], references: [id]) // Make the relation optional
-  submissions Submission[] // One-to-many relationship with Submission
+  submissions  Submission[] // One-to-many relationship with Submission
+  modul        Modul        @relation(fields: [modul_id], references: [id])
 
   @@map("tasks")
 }

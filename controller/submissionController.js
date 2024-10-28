@@ -3,18 +3,13 @@ const submissionService = require('../services/submissionService');
 
 async function createSubmission(req, res) {
     try {
-        // Directly set userId for testing
-        const userId = 1; // Hardcoded user ID for testing
-        const { file, groupId, taskId, adminId } = req.body;
-
-        // Log the extracted data
-        console.log("Request Data:", { file, userId, groupId, taskId, adminId });
+        const { file, groupId, taskId, userId, status } = req.body;
 
         // Create the submission
-        const newSubmission = await submissionService.createSubmission({ file, userId, groupId, taskId, adminId });
+        const newSubmission = await submissionService.createSubmission({ file, groupId, taskId, userId, status });
 
         // Broadcast the new submission to other members in the group (if using Socket.io)
-        req.io.emit('newSubmission', newSubmission); // Make sure req.io is passed in middleware
+        // req.io.emit('newSubmission', newSubmission); // Make sure req.io is passed in middleware
 
         // Send success response
         res.status(201).json({

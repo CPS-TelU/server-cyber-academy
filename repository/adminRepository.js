@@ -18,37 +18,35 @@ const uploadCertificate = async (grade, status, imageUrl, user_id) => {
     return result;
 };
 
-const uploadTask = async (title, module, opened_at, closed_at, description, fileUrl) => {
+const uploadTask = async (title, modul_id, deadline, description, fileUrl) => {
     const result = await prisma.task.create({
         data: {
             title,
-            module,
-            opened_at: new Date(opened_at).toISOString(),
-            closed_at: new Date(closed_at).toISOString(),
+            modul: {
+                connect: {
+                    id: Number(modul_id),
+                }
+            },
+            deadline: new Date(deadline).toISOString(),
             description,
             file: fileUrl,
-            // user: {
-            //     connect: {
-            //         id: userId  // Pastikan userId adalah integer, bukan array
-            //     }
-            // },
         }
     });
 
     return result;
 };
 
-const uploadModule = async (name, fileUrl, opened_at) => {
+const uploadModule = async (name, fileUrl, user_id, status, description, image, available_at, is_clicked) => {
     const result = await prisma.modul.create({
         data: {
-            name,
-            file: fileUrl,
-            opened_at: new Date(opened_at).toISOString(),
-            // user: {
-            //     connect: {
-            //         id: userId  // Pastikan userId adalah integer, bukan array
-            //     }
-            // },
+            name: name,
+            link: fileUrl,
+            user: { connect: { id: user_id } },
+            status: status,
+            description: description,
+            image: image,
+            available_at: new Date(available_at).toISOString(),
+            is_clicked: is_clicked,
         }
     });
 

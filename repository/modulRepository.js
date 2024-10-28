@@ -8,9 +8,12 @@ class ModulRepository {
       data: {
         name: data.name,
         link: data.link,
-        status: data.status,
-        admin: { connect: { id: data.admin_id } },
         user: { connect: { id: data.user_id } },
+        status: data.status,
+        description: data.description,
+        image: data.image,
+        available_at: data.available_at,
+        is_clicked: data.is_clicked,
       },
     });
   }
@@ -20,7 +23,6 @@ class ModulRepository {
     return await prisma.modul.findMany({
       include: {
         user: true,
-        admin: true,
       },
     });
   }
@@ -31,7 +33,6 @@ class ModulRepository {
       where: { id: Number(id) },
       include: {
         user: true,
-        admin: true,
       },
     });
   }

@@ -4,11 +4,10 @@ const prisma = new PrismaClient();
 
 class SubmissionRepository {
     // Create a new submission
-    async createSubmission({ file, userId, groupId, taskId, adminId }) {
+    async createSubmission({ file, groupId, taskId, userId, status}) {
         return await prisma.submission.create({
             data: {
                 file,
-                submitted: true,
                 group: {
                     connect: { id: groupId }, // Connect to the existing group
                 },
@@ -18,9 +17,7 @@ class SubmissionRepository {
                 user: {
                     connect: { id: userId }, // Connect to the existing user
                 },
-                admin: {
-                    connect: { id: adminId }, // Connect to the existing admin
-                }
+                status: status
             },
         });
     }

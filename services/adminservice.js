@@ -12,18 +12,32 @@ const taskRepository = require("../repository/taskRepository")
 const submissionRepository = require("../repository/submissionRepository")
 
 
-const handleFileUpload = async (name, file, opened_at) => {
+const handleFileUpload = async (name, file, user_id, status, description, image, available_at, is_clicked) => {
   const uploadResponse = await imagekit.upload({
     file: file.buffer.toString("base64"), // Convert buffer to base64 string
     fileName: file.originalname, // Menggunakan nama asli file
     folder: "/CA/Modul",
   });
+
+  const imageUploadResponse = await imagekit.upload({
+    file: image.buffer.toString("base64"),
+    fileName: image.originalname,
+    folder: "/CA/Modul",
+  });
+
   // Logika pemrosesan file jika ada
-  await uploadModule(name, uploadResponse.url, opened_at);
+  await uploadModule(name, uploadResponse.url, user_id, status, description, imageUploadResponse.url, available_at, is_clicked);
   return {
-    filename: file.originalname,
-    path: file.path,
-    size: file.size,
+    file: {
+      filename: file.originalname,
+      path: file.path,
+      size: file.size,
+    },
+    image: {
+      filename: image.originalname,
+      path: image.path,
+      size: image.size,
+    }
   };
 };
 
@@ -45,9 +59,8 @@ const handleSertifUpload = async (grade, status, file, user_id) => {
 
 const handleTaskUpload = async (
   title,
-  module,
-  openedAt,
-  closedAt,
+  modul_id,
+  deadline,
   description,
   file
 ) => {
@@ -59,9 +72,8 @@ const handleTaskUpload = async (
 
   await uploadTask(
     title,
-    module,
-    openedAt,
-    closedAt,
+    modul_id,
+    deadline,
     description,
     uploadResponse.url
   );

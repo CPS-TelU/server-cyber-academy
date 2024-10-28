@@ -1,8 +1,8 @@
 // services/submissionService.js
 const submissionRepository = require('../repository/submissionRepository');
 
-async function createSubmission({ file, userId, groupId, taskId, adminId }) {
-    return await submissionRepository.createSubmission({ file, userId, groupId, taskId, adminId });
+async function createSubmission({ file, userId, groupId, taskId, status }) {
+    return await submissionRepository.createSubmission({ file, groupId, taskId, userId, status });
 }
 
 // Delete a submission by ID

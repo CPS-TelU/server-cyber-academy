@@ -49,5 +49,6 @@ jobs:
       run: npm run build --if-present
     - name: Change Directory
       run: cd /home/be-cyberacademy/actions-runner/_work/server-cyber-academy/server-cyber-academy/
+      # pm 2 restart
     - name: restart with PM2
       run: pm2 restart 0
